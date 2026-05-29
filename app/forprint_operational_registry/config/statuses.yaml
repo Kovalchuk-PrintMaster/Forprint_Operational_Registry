@@ -1,0 +1,34 @@
+order_statuses:
+  - new
+  - needs_review
+  - quote_pending
+  - quote_accepted
+  - payment_reference_pending
+  - payment_reference_confirmed
+  - in_prepress
+  - ready_for_production
+  - in_production
+  - ready_for_pickup
+  - completed
+  - cancelled
+  - blocked
+
+task_statuses:
+  - new
+  - assigned
+  - in_progress
+  - blocked
+  - completed
+  - cancelled
+
+recommended_source_channels:
+  - telegram_bot
+  - website
+  - mobile_app
+  - crm_manual
+  - gateway_import
+  - internal_module
+  - legacy_import
+
+forbidden_operational_statuses:
+  - paid

@@ -1,0 +1,11 @@
+.venv_operational_registry/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+
+reports/
+.env
+.env.*
+.DS_Store

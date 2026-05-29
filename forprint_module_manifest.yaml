@@ -1,0 +1,70 @@
+module_id: forprint_operational_registry
+module_name: ForPrint Operational Registry
+role: operational_truth_registry
+status: bootstrap_development
+version: 0.1.0
+
+owns:
+  - client_record
+  - order
+  - order_status
+  - operational_task
+  - task_status
+  - workflow_state
+  - operational_event
+  - order_history_event
+  - manual_decision_record
+  - operator_action_record
+  - operational_note
+  - deadline
+  - responsible_user_reference
+
+must_not_own:
+  - invoice
+  - payment
+  - payment_status
+  - invoice_status
+  - accounting_document
+  - one_c_raw_snapshot
+  - one_c_staging_record
+  - material_catalog
+  - product_catalog
+  - product_template
+  - machine_capability_definition
+  - price_calculation
+  - quote_formula
+  - prepress_file_lifecycle
+  - uploaded_file_binary_storage
+  - warehouse_stock_balance
+  - warehouse_reservation_truth
+  - delivery_carrier_integration
+  - logistics_integration
+  - crm_dashboard_state
+  - crm_saved_report_preset
+  - integration_routing
+  - library_contract_registry
+  - architecture_governance
+
+allowed_reference_fields:
+  - quote_ref
+  - invoice_ref
+  - payment_ref
+  - accounting_document_ref
+  - payment_status_reference
+  - production_ref
+  - prepress_task_ref
+
+recommended_source_channels:
+  - telegram_bot
+  - website
+  - mobile_app
+  - crm_manual
+  - gateway_import
+  - internal_module
+  - legacy_import
+
+notes:
+  - Operational Registry owns operational truth only.
+  - Accounting Registry owns real payment and invoice truth.
+  - Do not use paid as a canonical Operational Registry status.
+  - Use payment_reference_pending and payment_reference_confirmed for operational references.
