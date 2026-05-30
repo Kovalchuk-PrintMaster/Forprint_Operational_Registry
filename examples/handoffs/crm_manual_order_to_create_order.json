@@ -1,0 +1,18 @@
+{
+  "fixture_status": "example",
+  "runtime_transport_owner": "forprint_integration_gateway_future",
+  "canonical_contract_truth": "forprint_library_future",
+  "scenario": "crm_manual_order_to_create_order",
+  "command_type": "operational.create_order.v1",
+  "payload": {
+    "order_id": "order_crm_manual_001",
+    "client_id": "client_001",
+    "source_channel": "crm_manual",
+    "source_refs": {
+      "crm_decision_ref": "crm_decision_001"
+    },
+    "metadata": {
+      "operator_note": "Manual order created by CRM operator."
+    }
+  }
+}

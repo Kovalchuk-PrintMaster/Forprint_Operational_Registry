@@ -1,0 +1,16 @@
+{
+  "fixture_status": "example",
+  "runtime_transport_owner": "forprint_integration_gateway_future",
+  "canonical_contract_truth": "forprint_library_future",
+  "scenario": "accounting_payment_reference_update",
+  "command_type": "operational.change_order_status.v1",
+  "payload": {
+    "order_id": "order_001",
+    "to_status": "payment_reference_confirmed",
+    "reason": "Accounting Registry provided payment reference.",
+    "metadata": {
+      "accounting_invoice_ref": "invoice_001",
+      "accounting_payment_ref": "payment_001"
+    }
+  }
+}

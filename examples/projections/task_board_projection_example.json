@@ -1,0 +1,14 @@
+{
+  "fixture_status": "example",
+  "runtime_transport_owner": "forprint_integration_gateway_future",
+  "canonical_contract_truth": "forprint_library_future",
+  "projection_type": "TaskBoardProjection",
+  "payload": {
+    "order_id": "order_001",
+    "tasks_by_status": {
+      "new": ["task_001"],
+      "in_progress": ["task_002"],
+      "completed": ["task_003"]
+    }
+  }
+}

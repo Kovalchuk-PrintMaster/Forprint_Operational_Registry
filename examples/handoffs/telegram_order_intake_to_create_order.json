@@ -1,0 +1,19 @@
+{
+  "fixture_status": "example",
+  "runtime_transport_owner": "forprint_integration_gateway_future",
+  "canonical_contract_truth": "forprint_library_future",
+  "scenario": "telegram_order_intake_to_create_order",
+  "command_type": "operational.create_order.v1",
+  "payload": {
+    "order_id": "order_from_telegram_001",
+    "client_id": "client_telegram_001",
+    "source_channel": "telegram_bot",
+    "source_refs": {
+      "telegram_chat_ref": "tg_chat_001",
+      "telegram_user_ref": "tg_user_001"
+    },
+    "metadata": {
+      "order_intake_draft_ref": "telegram_draft_001"
+    }
+  }
+}

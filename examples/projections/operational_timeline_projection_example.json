@@ -1,0 +1,16 @@
+{
+  "fixture_status": "example",
+  "runtime_transport_owner": "forprint_integration_gateway_future",
+  "canonical_contract_truth": "forprint_library_future",
+  "projection_type": "OperationalTimelineProjection",
+  "payload": {
+    "entity_type": "order",
+    "entity_id": "order_001",
+    "events": [
+      "order_created",
+      "order_status_changed",
+      "operational_blocker_created",
+      "operational_blocker_resolved"
+    ]
+  }
+}

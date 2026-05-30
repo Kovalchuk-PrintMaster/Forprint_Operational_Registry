@@ -1,0 +1,18 @@
+{
+  "fixture_status": "example",
+  "runtime_transport_owner": "forprint_integration_gateway_future",
+  "canonical_contract_truth": "forprint_library_future",
+  "scenario": "prepress_blocker_attached_to_order",
+  "command_type": "operational.create_blocker.v1",
+  "payload": {
+    "blocker_id": "blocker_prepress_001",
+    "entity_type": "order",
+    "entity_id": "order_001",
+    "blocker_type": "waiting_prepress_check",
+    "reason": "Prepress check result is not available yet.",
+    "metadata": {
+      "prepress_job_ref": "prepress_job_001",
+      "prepress_result_ref": "prepress_result_pending_001"
+    }
+  }
+}

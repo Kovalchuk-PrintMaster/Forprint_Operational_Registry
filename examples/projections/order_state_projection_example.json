@@ -1,0 +1,24 @@
+{
+  "fixture_status": "example",
+  "runtime_transport_owner": "forprint_integration_gateway_future",
+  "canonical_contract_truth": "forprint_library_future",
+  "projection_type": "OrderStateProjection",
+  "payload": {
+    "order_id": "order_001",
+    "client_id": "client_001",
+    "order_status": "payment_reference_confirmed",
+    "workflow_status": "payment_reference_confirmed",
+    "source_channel": "crm_manual",
+    "quote_ref": "quote_001",
+    "accounting_refs": {
+      "accounting_invoice_ref": "invoice_001",
+      "accounting_payment_ref": "payment_001"
+    },
+    "prepress_refs": {
+      "prepress_job_ref": "prepress_job_001"
+    },
+    "active_blockers_count": 0,
+    "is_blocked": false,
+    "readiness_status": "available"
+  }
+}

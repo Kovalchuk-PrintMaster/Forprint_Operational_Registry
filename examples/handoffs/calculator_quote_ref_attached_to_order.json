@@ -1,0 +1,17 @@
+{
+  "fixture_status": "example",
+  "runtime_transport_owner": "forprint_integration_gateway_future",
+  "canonical_contract_truth": "forprint_library_future",
+  "scenario": "calculator_quote_ref_attached_to_order",
+  "command_type": "operational.create_order.v1",
+  "payload": {
+    "order_id": "order_with_quote_001",
+    "client_id": "client_001",
+    "source_channel": "crm_manual",
+    "quote_ref": "quote_001",
+    "calculator_result_ref": "calculator_result_001",
+    "metadata": {
+      "material_consumption_estimate_ref": "material_estimate_001"
+    }
+  }
+}

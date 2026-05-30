@@ -25,9 +25,12 @@ from forprint_operational_registry.services.registry_checks import (  # noqa: E4
     validate_checkpoint_a_files,
     validate_checkpoint_b_files,
     validate_foreign_import_boundary,
+    validate_handoff_fixtures,
+    validate_macro_pack_files,
     validate_manifest,
     validate_no_production_api,
     validate_placeholder_contracts,
+    validate_projection_fixtures,
     validate_required_docs,
     validate_status_config,
     validate_v02_boundary_files,
@@ -210,6 +213,30 @@ def build_check_report(run_external: bool = True) -> dict[str, object]:
             name="Checkpoint B files",
             expected_result="Lifecycle/blocker files exist",
             errors=validate_checkpoint_b_files(PROJECT_ROOT),
+        )
+    )
+
+    steps.append(
+        run_internal_check(
+            name="Macro pack files",
+            expected_result="Projection/readiness/status export files exist",
+            errors=validate_macro_pack_files(PROJECT_ROOT),
+        )
+    )
+
+    steps.append(
+        run_internal_check(
+            name="Handoff fixtures",
+            expected_result="Offline handoff fixtures are valid examples",
+            errors=validate_handoff_fixtures(PROJECT_ROOT),
+        )
+    )
+
+    steps.append(
+        run_internal_check(
+            name="Projection fixtures",
+            expected_result="Projection example fixtures are valid",
+            errors=validate_projection_fixtures(PROJECT_ROOT),
         )
     )
 

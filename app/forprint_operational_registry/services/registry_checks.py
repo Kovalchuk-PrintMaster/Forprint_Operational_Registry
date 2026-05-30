@@ -1,5 +1,6 @@
 """Internal validation checks for Operational Registry bootstrap."""
 
+import json
 from pathlib import Path
 from typing import Any
 
@@ -18,6 +19,37 @@ REQUIRED_DOCS: tuple[str, ...] = (
     "docs/architecture/command_envelope.md",
     "docs/architecture/future_gateway_crm_contracts.md",
     "docs/architecture/reference_conventions.md",
+    "docs/architecture/operational_projections.md",
+    "docs/architecture/reporting_readiness.md",
+    "docs/architecture/handoff_readiness.md",
+    "docs/architecture/module_reference_conventions.md",
+    "docs/architecture/order_readiness.md",
+)
+
+REQUIRED_MACRO_PACK_FILES: tuple[str, ...] = (
+    "app/forprint_operational_registry/dto/projections.py",
+    "app/forprint_operational_registry/services/projections.py",
+    "app/forprint_operational_registry/services/order_readiness.py",
+    "scripts/export_module_status.py",
+    "docs/architecture/operational_projections.md",
+    "docs/architecture/reporting_readiness.md",
+    "docs/architecture/handoff_readiness.md",
+    "docs/architecture/module_reference_conventions.md",
+    "docs/architecture/order_readiness.md",
+)
+
+REQUIRED_HANDOFF_FIXTURES: tuple[str, ...] = (
+    "telegram_order_intake_to_create_order.json",
+    "crm_manual_order_to_create_order.json",
+    "calculator_quote_ref_attached_to_order.json",
+    "accounting_payment_reference_update.json",
+    "prepress_blocker_attached_to_order.json",
+)
+
+REQUIRED_PROJECTION_FIXTURES: tuple[str, ...] = (
+    "order_state_projection_example.json",
+    "task_board_projection_example.json",
+    "operational_timeline_projection_example.json",
 )
 
 REQUIRED_MUST_NOT_OWN: tuple[str, ...] = (
@@ -136,6 +168,15 @@ def load_yaml(path: Path) -> dict[str, Any]:
     if not isinstance(data, dict):
         raise ValueError(f"YAML file must contain a mapping: {path}")
 
+    return data
+
+
+def json_load(path: Path) -> dict[str, Any]:
+    """Load JSON file as dictionary."""
+
+    data = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(data, dict):
+        raise ValueError(f"JSON file must contain an object: {path}")
     return data
 
 
@@ -353,5 +394,61 @@ def validate_blocker_config(project_root: Path) -> list[str]:
     for blocker_status in ("open", "resolved"):
         if blocker_status not in blocker_statuses:
             errors.append(f"operational blocker status is missing: {blocker_status}")
+
+    return errors
+
+
+def validate_macro_pack_files(project_root: Path) -> list[str]:
+    """Validate v0.3 macro pack files exist."""
+
+    errors: list[str] = []
+
+    for relative_path in REQUIRED_MACRO_PACK_FILES:
+        if not (project_root / relative_path).exists():
+            errors.append(f"required macro pack file is missing: {relative_path}")
+
+    return errors
+
+
+def validate_handoff_fixtures(project_root: Path) -> list[str]:
+    """Validate local offline handoff fixtures."""
+
+    errors: list[str] = []
+    handoff_dir = project_root / "examples/handoffs"
+
+    for filename in REQUIRED_HANDOFF_FIXTURES:
+        path = handoff_dir / filename
+        if not path.exists():
+            errors.append(f"handoff fixture is missing: {filename}")
+            continue
+
+        data = json_load(path)
+        if data.get("fixture_status") != "example":
+            errors.append(f"{filename}: fixture_status must be example")
+
+        if data.get("runtime_transport_owner") != "forprint_integration_gateway_future":
+            errors.append(f"{filename}: runtime_transport_owner must point to future Gateway")
+
+        if data.get("canonical_contract_truth") != "forprint_library_future":
+            errors.append(f"{filename}: canonical_contract_truth must point to future Library")
+
+    return errors
+
+
+def validate_projection_fixtures(project_root: Path) -> list[str]:
+    """Validate projection example fixtures."""
+
+    errors: list[str] = []
+    projection_dir = project_root / "examples/projections"
+
+    for filename in REQUIRED_PROJECTION_FIXTURES:
+        path = projection_dir / filename
+        if not path.exists():
+            errors.append(f"projection fixture is missing: {filename}")
+            continue
+
+        data = json_load(path)
+        if data.get("fixture_status") != "example":
+            errors.append(f"{filename}: fixture_status must be example")
 
     return errors
