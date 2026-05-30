@@ -1,0 +1,20 @@
+contract_id: operational.create_task.v1
+fixture_status: placeholder
+canonical_contract_truth: forprint_library_future
+runtime_transport_owner: forprint_integration_gateway_future
+owner_module: forprint_operational_registry
+contract_kind: command
+runtime_status: local_offline_fixture_only
+command_type: operational.create_task.v1
+payload_shape:
+  required:
+    - task_id
+    - order_id
+    - task_type
+  optional:
+    - assigned_to_ref
+    - deadline
+    - metadata
+boundary_notes:
+  - This fixture is local and offline.
+  - It does not implement real CRM, Gateway or Telegram integration.

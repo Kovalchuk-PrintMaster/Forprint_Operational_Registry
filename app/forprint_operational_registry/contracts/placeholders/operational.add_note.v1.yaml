@@ -1,0 +1,21 @@
+contract_id: operational.add_note.v1
+fixture_status: placeholder
+canonical_contract_truth: forprint_library_future
+runtime_transport_owner: forprint_integration_gateway_future
+owner_module: forprint_operational_registry
+contract_kind: command
+runtime_status: local_offline_fixture_only
+command_type: operational.add_note.v1
+payload_shape:
+  required:
+    - note_id
+    - order_id
+    - author_ref
+    - note_text
+  optional:
+    - task_id
+    - visibility
+    - metadata
+boundary_notes:
+  - Operational notes are lightweight annotations.
+  - They are not CRM communication history.

@@ -1,0 +1,17 @@
+contract_id: operational.assign_task.v1
+fixture_status: placeholder
+canonical_contract_truth: forprint_library_future
+runtime_transport_owner: forprint_integration_gateway_future
+owner_module: forprint_operational_registry
+contract_kind: command
+runtime_status: local_offline_fixture_only
+command_type: operational.assign_task.v1
+payload_shape:
+  required:
+    - task_id
+    - assigned_to_ref
+  optional:
+    - metadata
+boundary_notes:
+  - This fixture is not canonical contract truth.
+  - It only describes future local command shape.

@@ -1,0 +1,17 @@
+contract_id: operational.order_history_snapshot.v1
+fixture_status: placeholder
+canonical_contract_truth: forprint_library_future
+runtime_transport_owner: forprint_integration_gateway_future
+owner_module: forprint_operational_registry
+contract_kind: query_result
+runtime_status: local_offline_fixture_only
+snapshot_type: order_history
+payload_shape:
+  required:
+    - order_id
+    - events
+  optional:
+    - metadata
+boundary_notes:
+  - Operational history is append-only.
+  - This fixture is not a global event bus contract.

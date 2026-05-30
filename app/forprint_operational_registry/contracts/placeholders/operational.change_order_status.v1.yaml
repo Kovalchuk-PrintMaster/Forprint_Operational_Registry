@@ -1,0 +1,18 @@
+contract_id: operational.change_order_status.v1
+fixture_status: placeholder
+canonical_contract_truth: forprint_library_future
+runtime_transport_owner: forprint_integration_gateway_future
+owner_module: forprint_operational_registry
+contract_kind: command
+runtime_status: local_offline_fixture_only
+command_type: operational.change_order_status.v1
+payload_shape:
+  required:
+    - to_status
+  optional:
+    - order_id
+    - reason
+    - metadata
+boundary_notes:
+  - This fixture is not canonical contract truth.
+  - Operational Registry does not own Gateway routing.

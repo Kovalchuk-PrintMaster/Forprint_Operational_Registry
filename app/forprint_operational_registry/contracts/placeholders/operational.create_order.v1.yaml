@@ -1,0 +1,25 @@
+contract_id: operational.create_order.v1
+fixture_status: placeholder
+canonical_contract_truth: forprint_library_future
+runtime_transport_owner: forprint_integration_gateway_future
+owner_module: forprint_operational_registry
+contract_kind: command
+runtime_status: local_offline_fixture_only
+command_type: operational.create_order.v1
+payload_shape:
+  required:
+    - client_id
+  optional:
+    - order_id
+    - source_channel
+    - source_refs
+    - quote_ref
+    - calculator_result_ref
+    - accounting_refs
+    - production_refs
+    - prepress_refs
+    - metadata
+boundary_notes:
+  - This fixture is not canonical contract truth.
+  - Future canonical contract definitions belong to ForPrint Library.
+  - Future runtime transport belongs to ForPrint Integration Gateway.

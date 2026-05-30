@@ -21,8 +21,11 @@ if str(APP_PATH) not in sys.path:
     sys.path.insert(0, str(APP_PATH))
 
 from forprint_operational_registry.services.registry_checks import (  # noqa: E402
+    validate_checkpoint_a_files,
+    validate_foreign_import_boundary,
     validate_manifest,
     validate_no_production_api,
+    validate_placeholder_contracts,
     validate_required_docs,
     validate_status_config,
     validate_v02_boundary_files,
@@ -173,6 +176,30 @@ def build_check_report(run_external: bool = True) -> dict[str, object]:
             name="No production API",
             expected_result="Production API не додано у v0.2",
             errors=validate_no_production_api(PROJECT_ROOT),
+        )
+    )
+
+    steps.append(
+        run_internal_check(
+            name="Checkpoint A files",
+            expected_result="Envelope/reference/placeholder contract files exist",
+            errors=validate_checkpoint_a_files(PROJECT_ROOT),
+        )
+    )
+
+    steps.append(
+        run_internal_check(
+            name="Placeholder contracts",
+            expected_result="Placeholder contracts are non-canonical local fixtures",
+            errors=validate_placeholder_contracts(PROJECT_ROOT),
+        )
+    )
+
+    steps.append(
+        run_internal_check(
+            name="Foreign import boundary",
+            expected_result="No real foreign runtime imports or integration adapters",
+            errors=validate_foreign_import_boundary(PROJECT_ROOT),
         )
     )
 

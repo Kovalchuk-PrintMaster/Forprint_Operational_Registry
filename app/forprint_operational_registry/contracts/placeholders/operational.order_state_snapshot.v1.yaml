@@ -1,0 +1,25 @@
+contract_id: operational.order_state_snapshot.v1
+fixture_status: placeholder
+canonical_contract_truth: forprint_library_future
+runtime_transport_owner: forprint_integration_gateway_future
+owner_module: forprint_operational_registry
+contract_kind: query_result
+runtime_status: local_offline_fixture_only
+snapshot_type: order_state
+payload_shape:
+  required:
+    - order_id
+    - client_id
+    - order_status
+    - workflow_status
+  optional:
+    - source_channel
+    - quote_ref
+    - accounting_refs
+    - production_refs
+    - prepress_refs
+    - metadata
+boundary_notes:
+  - This is an operational state snapshot.
+  - It is not CRM dashboard layout.
+  - It is not accounting truth.

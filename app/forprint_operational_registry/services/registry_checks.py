@@ -15,6 +15,9 @@ REQUIRED_DOCS: tuple[str, ...] = (
     "docs/architecture/service_layer.md",
     "docs/architecture/future_integration_contracts.md",
     "docs/architecture/operational_notes.md",
+    "docs/architecture/command_envelope.md",
+    "docs/architecture/future_gateway_crm_contracts.md",
+    "docs/architecture/reference_conventions.md",
 )
 
 REQUIRED_MUST_NOT_OWN: tuple[str, ...] = (
@@ -73,11 +76,37 @@ REQUIRED_V02_FILES: tuple[str, ...] = (
     "app/forprint_operational_registry/services/order_queries.py",
 )
 
+REQUIRED_CHECKPOINT_A_FILES: tuple[str, ...] = (
+    "app/forprint_operational_registry/dto/envelope.py",
+    "app/forprint_operational_registry/dto/references.py",
+    "docs/architecture/command_envelope.md",
+    "docs/architecture/future_gateway_crm_contracts.md",
+    "docs/architecture/reference_conventions.md",
+)
+
+REQUIRED_PLACEHOLDER_CONTRACTS: tuple[str, ...] = (
+    "operational.create_order.v1.yaml",
+    "operational.change_order_status.v1.yaml",
+    "operational.create_task.v1.yaml",
+    "operational.assign_task.v1.yaml",
+    "operational.add_note.v1.yaml",
+    "operational.order_state_snapshot.v1.yaml",
+    "operational.order_history_snapshot.v1.yaml",
+)
+
 FORBIDDEN_PRODUCTION_API_PATHS: tuple[str, ...] = (
     "app/forprint_operational_registry/api",
     "app/forprint_operational_registry/routes",
     "app/forprint_operational_registry/routers",
     "app/forprint_operational_registry/http",
+)
+
+FORBIDDEN_REAL_INTEGRATION_PATHS: tuple[str, ...] = (
+    "app/forprint_operational_registry/adapters/gateway",
+    "app/forprint_operational_registry/adapters/crm",
+    "app/forprint_operational_registry/adapters/telegram",
+    "app/forprint_operational_registry/adapters/accounting",
+    "app/forprint_operational_registry/adapters/calculator",
 )
 
 
@@ -131,7 +160,7 @@ def validate_required_docs(project_root: Path) -> list[str]:
 
 
 def validate_status_config(project_root: Path) -> list[str]:
-    """Validate status config respects Blueprint v0.1/v0.2 terminology."""
+    """Validate status config respects Blueprint v0.1/v0.2/v0.3 terminology."""
 
     errors: list[str] = []
     status_path = project_root / "app/forprint_operational_registry/config/statuses.yaml"
@@ -170,12 +199,106 @@ def validate_v02_boundary_files(project_root: Path) -> list[str]:
 
 
 def validate_no_production_api(project_root: Path) -> list[str]:
-    """Validate v0.2 did not introduce production API paths."""
+    """Validate v0.2/v0.3 did not introduce production API paths."""
 
     errors: list[str] = []
 
     for relative_path in FORBIDDEN_PRODUCTION_API_PATHS:
         if (project_root / relative_path).exists():
-            errors.append(f"production API path is not approved in v0.2: {relative_path}")
+            errors.append(f"production API path is not approved: {relative_path}")
+
+    return errors
+
+
+def validate_checkpoint_a_files(project_root: Path) -> list[str]:
+    """Validate Checkpoint A files exist."""
+
+    errors: list[str] = []
+
+    for relative_path in REQUIRED_CHECKPOINT_A_FILES:
+        if not (project_root / relative_path).exists():
+            errors.append(f"required Checkpoint A file is missing: {relative_path}")
+
+    placeholder_dir = project_root / "app/forprint_operational_registry/contracts/placeholders"
+    for filename in REQUIRED_PLACEHOLDER_CONTRACTS:
+        if not (placeholder_dir / filename).exists():
+            errors.append(f"required placeholder contract is missing: {filename}")
+
+    return errors
+
+
+def validate_placeholder_contracts(project_root: Path) -> list[str]:
+    """Validate placeholder contracts are clearly non-canonical."""
+
+    errors: list[str] = []
+    placeholder_dir = project_root / "app/forprint_operational_registry/contracts/placeholders"
+
+    if not placeholder_dir.exists():
+        return ["placeholder contract directory is missing"]
+
+    for filename in REQUIRED_PLACEHOLDER_CONTRACTS:
+        contract_path = placeholder_dir / filename
+        if not contract_path.exists():
+            errors.append(f"placeholder contract is missing: {filename}")
+            continue
+
+        contract = load_yaml(contract_path)
+
+        if contract.get("fixture_status") != "placeholder":
+            errors.append(f"{filename}: fixture_status must be placeholder")
+
+        if contract.get("canonical_contract_truth") != "forprint_library_future":
+            errors.append(f"{filename}: canonical_contract_truth must point to future Library")
+
+        if contract.get("runtime_transport_owner") != "forprint_integration_gateway_future":
+            errors.append(f"{filename}: runtime_transport_owner must point to future Gateway")
+
+        if contract.get("runtime_status") != "local_offline_fixture_only":
+            errors.append(f"{filename}: runtime_status must be local_offline_fixture_only")
+
+    return errors
+
+
+def validate_foreign_import_boundary(project_root: Path) -> list[str]:
+    """Validate v0.3 DTOs do not import real foreign modules."""
+
+    errors: list[str] = []
+
+    files_to_check = (
+        project_root / "app/forprint_operational_registry/dto/envelope.py",
+        project_root / "app/forprint_operational_registry/dto/references.py",
+    )
+
+    forbidden_import_tokens = (
+        "forprint_integration_gateway",
+        "forprint_crm",
+        "telegram_bot",
+        "accounting_registry",
+        "calculator_engine",
+        "forprint_prepress_hub",
+        "forprint_library",
+        "fastapi",
+        "requests",
+    )
+
+    for file_path in files_to_check:
+        if not file_path.exists():
+            errors.append(f"foreign import boundary file is missing: {file_path}")
+            continue
+
+        import_lines = [
+            line.strip().lower()
+            for line in file_path.read_text(encoding="utf-8").splitlines()
+            if line.strip().startswith(("import ", "from "))
+        ]
+
+        for line in import_lines:
+            for token in forbidden_import_tokens:
+                if token in line:
+                    errors.append(f"{file_path}: forbidden runtime import token: {token}")
+
+    for relative_path in FORBIDDEN_REAL_INTEGRATION_PATHS:
+        if (project_root / relative_path).exists():
+            errors.append(f"real integration path is not approved in v0.3: {relative_path}")
 
     return errors
