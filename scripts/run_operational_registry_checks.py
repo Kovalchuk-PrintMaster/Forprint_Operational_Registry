@@ -29,6 +29,7 @@ from forprint_operational_registry.services.registry_checks import (  # noqa: E4
     validate_macro_pack_files,
     validate_manifest,
     validate_module_handoff_examples,
+    validate_no_forbidden_storage_tables,
     validate_no_production_api,
     validate_placeholder_contracts,
     validate_projection_fixtures,
@@ -37,6 +38,7 @@ from forprint_operational_registry.services.registry_checks import (  # noqa: E4
     validate_status_config,
     validate_v02_boundary_files,
     validate_v04_files,
+    validate_v05_storage_files,
 )
 
 console = Console()
@@ -278,6 +280,22 @@ def build_check_report(run_external: bool = True) -> dict[str, object]:
                 ],
             )
         )
+
+    steps.append(
+        run_internal_check(
+            name="v0.5 storage files",
+            expected_result="SQLite storage foundation files exist",
+            errors=validate_v05_storage_files(PROJECT_ROOT),
+        )
+    )
+
+    steps.append(
+        run_internal_check(
+            name="No forbidden storage tables",
+            expected_result="No foreign-domain owned storage tables introduced",
+            errors=validate_no_forbidden_storage_tables(PROJECT_ROOT),
+        )
+    )
 
     steps.append(
         run_internal_check(

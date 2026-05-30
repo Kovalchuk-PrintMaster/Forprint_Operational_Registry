@@ -29,6 +29,11 @@ REQUIRED_DOCS: tuple[str, ...] = (
     "docs/integration/reference_ready_contracts.md",
     "docs/integration/dependent_module_usage.md",
     "docs/integration/versioning_and_compatibility.md",
+    "docs/storage/storage_strategy.md",
+    "docs/storage/sqlite_test_storage.md",
+    "docs/storage/postgresql_future_path.md",
+    "docs/storage/repository_storage_boundary.md",
+    "docs/storage/persistence_safety_rules.md",
 )
 
 REQUIRED_MACRO_PACK_FILES: tuple[str, ...] = (
@@ -189,6 +194,34 @@ REQUIRED_QUERY_RESULT_EXAMPLES: tuple[str, ...] = (
     "examples/query_results/task_board_for_crm.json",
     "examples/query_results/order_timeline_for_operator.json",
     "examples/query_results/order_readiness_snapshot.json",
+)
+
+REQUIRED_V05_FILES: tuple[str, ...] = (
+    "app/forprint_operational_registry/storage/models.py",
+    "app/forprint_operational_registry/storage/session.py",
+    "app/forprint_operational_registry/storage/schema.py",
+    "app/forprint_operational_registry/repositories/sqlite.py",
+    "app/forprint_operational_registry/repositories/factory.py",
+    "app/forprint_operational_registry/config/storage.py",
+    "docs/storage/storage_strategy.md",
+    "docs/storage/sqlite_test_storage.md",
+    "docs/storage/postgresql_future_path.md",
+    "docs/storage/repository_storage_boundary.md",
+    "docs/storage/persistence_safety_rules.md",
+)
+
+FORBIDDEN_STORAGE_TABLE_NAMES: tuple[str, ...] = (
+    "invoices",
+    "payments",
+    "one_c_snapshots",
+    "product_catalog",
+    "material_catalog",
+    "price_calculations",
+    "prepress_files",
+    "warehouse_stock",
+    "crm_dashboard_state",
+    "gateway_routes",
+    "library_contracts",
 )
 
 
@@ -554,5 +587,36 @@ def validate_query_result_examples(project_root: Path) -> list[str]:
         forbidden = {"payment_truth", "invoice_truth", "product_catalog", "material_catalog"}
         if isinstance(payload, dict) and forbidden.intersection(payload):
             errors.append(f"{relative_path}: contains forbidden foreign truth fields")
+
+    return errors
+
+
+def validate_v05_storage_files(project_root: Path) -> list[str]:
+    """Validate v0.5 storage foundation files."""
+
+    errors: list[str] = []
+
+    for relative_path in REQUIRED_V05_FILES:
+        if not (project_root / relative_path).exists():
+            errors.append(f"required v0.5 storage file is missing: {relative_path}")
+
+    return errors
+
+
+def validate_no_forbidden_storage_tables(project_root: Path) -> list[str]:
+    """Validate schema does not introduce forbidden foreign-domain tables."""
+
+    errors: list[str] = []
+
+    try:
+        from forprint_operational_registry.storage.schema import STORAGE_TABLE_NAMES
+    except ImportError as error:
+        return [f"cannot import STORAGE_TABLE_NAMES: {error}"]
+
+    table_names = set(STORAGE_TABLE_NAMES)
+
+    for forbidden_table in FORBIDDEN_STORAGE_TABLE_NAMES:
+        if forbidden_table in table_names:
+            errors.append(f"forbidden foreign-domain storage table detected: {forbidden_table}")
 
     return errors

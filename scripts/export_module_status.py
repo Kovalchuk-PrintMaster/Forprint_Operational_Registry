@@ -33,6 +33,12 @@ def build_module_status() -> dict[str, Any]:
         "version": manifest.get("version"),
         "public_surface_status": "reference_ready_internal_offline",
         "facade_status": "internal_adapter_facing_facade_available",
+        "storage_status": "sqlite_local_test_foundation_ready",
+        "available_storage_backends": ["memory", "sqlite"],
+        "planned_storage_backends": ["postgresql"],
+        "persistent_storage_ready": True,
+        "production_db_ready": False,
+        "migration_status": "not_started",
         "implemented_layers": [
             "domain_models",
             "command_query_dtos",
@@ -47,6 +53,9 @@ def build_module_status() -> dict[str, Any]:
             "operational_projections",
             "handoff_fixtures",
             "module_status_export",
+            "sqlite_storage_foundation",
+            "repository_factory",
+            "persistent_repository_tests",
         ],
         "command_dtos": [
             "CreateClientCommand",

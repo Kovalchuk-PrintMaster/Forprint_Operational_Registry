@@ -27,3 +27,15 @@ def test_v04_module_status_includes_public_surface_and_facade() -> None:
     assert "query_dtos" in status
     assert "projection_dtos" in status
     assert status["boundary_marker"]["no_foreign_domain_ownership"] is True
+
+
+def test_v05_module_status_includes_storage_readiness() -> None:
+    status = build_module_status()
+
+    assert status["storage_status"] == "sqlite_local_test_foundation_ready"
+    assert status["persistent_storage_ready"] is True
+    assert status["production_db_ready"] is False
+    assert status["migration_status"] == "not_started"
+    assert "memory" in status["available_storage_backends"]
+    assert "sqlite" in status["available_storage_backends"]
+    assert "postgresql" in status["planned_storage_backends"]
