@@ -1,0 +1,17 @@
+{
+  "schema_version": "0.4",
+  "contract_id": "operational.attach_calculator_reference",
+  "contract_version": "v1",
+  "producer": "calculator_engine_future",
+  "consumer": "forprint_operational_registry",
+  "fixture_status": "example",
+  "real_integration": false,
+  "transport_owner_future": "forprint_integration_gateway",
+  "canonical_contract_truth_future": "forprint_library",
+  "payload": {
+    "order_id": "order_001",
+    "calculator_quote_ref": "quote_001",
+    "calculator_result_ref": "calc_result_001",
+    "material_consumption_estimate_ref": "material_estimate_001"
+  }
+}

@@ -28,12 +28,15 @@ from forprint_operational_registry.services.registry_checks import (  # noqa: E4
     validate_handoff_fixtures,
     validate_macro_pack_files,
     validate_manifest,
+    validate_module_handoff_examples,
     validate_no_production_api,
     validate_placeholder_contracts,
     validate_projection_fixtures,
+    validate_query_result_examples,
     validate_required_docs,
     validate_status_config,
     validate_v02_boundary_files,
+    validate_v04_files,
 )
 
 console = Console()
@@ -239,6 +242,42 @@ def build_check_report(run_external: bool = True) -> dict[str, object]:
             errors=validate_projection_fixtures(PROJECT_ROOT),
         )
     )
+
+    steps.append(
+        run_internal_check(
+            name="v0.4 integration surface files",
+            expected_result="Public surface/result/facade docs and files exist",
+            errors=validate_v04_files(PROJECT_ROOT),
+        )
+    )
+
+    steps.append(
+        run_internal_check(
+            name="Module handoff examples",
+            expected_result="Module handoff examples are valid offline fixtures",
+            errors=validate_module_handoff_examples(PROJECT_ROOT),
+        )
+    )
+
+    steps.append(
+        run_internal_check(
+            name="Query result examples",
+            expected_result="Query/projection examples are valid and boundary-safe",
+            errors=validate_query_result_examples(PROJECT_ROOT),
+        )
+    )
+
+    if run_external:
+        steps.append(
+            run_command(
+                name="Module status export",
+                expected_result="Module status export runs successfully",
+                command=[
+                    sys.executable,
+                    "scripts/export_module_status.py",
+                ],
+            )
+        )
 
     steps.append(
         run_internal_check(

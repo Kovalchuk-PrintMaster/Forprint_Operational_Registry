@@ -1,0 +1,19 @@
+{
+  "schema_version": "0.4",
+  "contract_id": "operational.task_board_projection",
+  "contract_version": "v1",
+  "fixture_status": "example",
+  "view_target": "crm_future",
+  "not_dashboard_layout": true,
+  "payload": {
+    "order_id": "order_001",
+    "tasks_by_status": {
+      "new": [
+        "task_001"
+      ],
+      "in_progress": [
+        "task_002"
+      ]
+    }
+  }
+}

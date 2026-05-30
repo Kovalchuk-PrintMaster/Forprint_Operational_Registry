@@ -1,0 +1,20 @@
+{
+  "schema_version": "0.4",
+  "contract_id": "operational.payment_reference_confirmed",
+  "contract_version": "v1",
+  "producer": "accounting_registry_service_future",
+  "consumer": "forprint_operational_registry",
+  "fixture_status": "example",
+  "real_integration": false,
+  "transport_owner_future": "forprint_integration_gateway",
+  "canonical_contract_truth_future": "forprint_library",
+  "command_type": "operational.change_order_status.v1",
+  "payload": {
+    "order_id": "order_001",
+    "to_status": "payment_reference_confirmed",
+    "metadata": {
+      "accounting_invoice_ref": "invoice_001",
+      "accounting_payment_ref": "payment_001"
+    }
+  }
+}

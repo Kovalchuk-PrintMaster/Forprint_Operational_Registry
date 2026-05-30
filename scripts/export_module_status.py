@@ -27,46 +27,80 @@ def build_module_status() -> dict[str, Any]:
 
     manifest = load_yaml(PROJECT_ROOT / "forprint_module_manifest.yaml")
 
-    implemented_layers = [
-        "domain_models",
-        "command_query_dtos",
-        "repository_interfaces",
-        "in_memory_repositories",
-        "service_layer",
-        "lifecycle_validation",
-        "operational_blockers",
-        "operational_projections",
-        "handoff_fixtures",
-        "module_status_export",
-    ]
-
     return {
         "module_id": manifest["module_id"],
         "module_status": manifest.get("status", "unknown"),
         "version": manifest.get("version"),
-        "implemented_layers": implemented_layers,
+        "public_surface_status": "reference_ready_internal_offline",
+        "facade_status": "internal_adapter_facing_facade_available",
+        "implemented_layers": [
+            "domain_models",
+            "command_query_dtos",
+            "command_result_dtos",
+            "error_warning_taxonomy",
+            "repository_interfaces",
+            "in_memory_repositories",
+            "service_layer",
+            "facade_layer",
+            "lifecycle_validation",
+            "operational_blockers",
+            "operational_projections",
+            "handoff_fixtures",
+            "module_status_export",
+        ],
+        "command_dtos": [
+            "CreateClientCommand",
+            "CreateOrderCommand",
+            "ChangeOrderStatusCommand",
+            "CreateOperationalTaskCommand",
+            "AssignOperationalTaskCommand",
+            "ChangeTaskStatusCommand",
+            "AddOperationalNoteCommand",
+            "AppendOperationalEventCommand",
+        ],
+        "query_dtos": [
+            "GetOrderByIdQuery",
+            "ListOrdersByClientQuery",
+            "ListTasksByOrderQuery",
+            "GetOrderStateQuery",
+            "GetOrderHistoryQuery",
+            "ListOrdersByStatusQuery",
+        ],
+        "projection_dtos": [
+            "OrderStateProjection",
+            "OrderListItemProjection",
+            "ClientOperationalSummary",
+            "TaskBoardProjection",
+            "OperationalTimelineProjection",
+            "OperationalReadinessSnapshot",
+            "OperationalHealthSnapshot",
+        ],
         "owned_objects": manifest.get("owns", []),
         "must_not_own": manifest.get("must_not_own", []),
-        "checks_summary": {
+        "examples_status": {
+            "module_handoffs": "examples/module_handoffs",
+            "query_results": "examples/query_results",
+            "legacy_handoff_examples": "examples/handoffs",
+            "projection_examples": "examples/projections",
+        },
+        "check_summary": {
             "local_check_report": "reports/operational_registry_check_report.json",
             "module_status_report": str(REPORT_PATH),
         },
-        "docs_summary": {
-            "architecture_docs_dir": "docs/architecture",
-            "handoff_examples_dir": "examples/handoffs",
-            "projection_examples_dir": "examples/projections",
-        },
         "open_questions": [
             "When should production API be introduced?",
-            "When should production storage strategy be selected?",
-            "Which Gateway/CRM adapter contracts should be canonicalized by Library first?",
+            "When should persistent storage strategy be selected?",
+            "Which contracts should ForPrint Library canonicalize first?",
+            "Which Gateway/CRM adapter should be prototyped first after approval?",
         ],
         "boundary_marker": {
             "no_production_api": True,
             "no_real_integrations": True,
             "no_database_migrations": True,
             "no_foreign_runtime_data": True,
+            "no_foreign_domain_ownership": True,
         },
+        "generated_at": datetime.now(UTC).isoformat(),
         "last_generated_at": datetime.now(UTC).isoformat(),
     }
 

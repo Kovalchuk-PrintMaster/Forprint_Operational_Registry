@@ -1,0 +1,20 @@
+{
+  "schema_version": "0.4",
+  "contract_id": "operational.prepress_blocker_created",
+  "contract_version": "v1",
+  "producer": "forprint_prepress_hub_future",
+  "consumer": "forprint_operational_registry",
+  "fixture_status": "example",
+  "real_integration": false,
+  "transport_owner_future": "forprint_integration_gateway",
+  "canonical_contract_truth_future": "forprint_library",
+  "payload": {
+    "blocker_type": "waiting_prepress_check",
+    "entity_type": "order",
+    "entity_id": "order_001",
+    "metadata": {
+      "prepress_job_ref": "prepress_job_001",
+      "prepress_result_ref": "prepress_result_pending_001"
+    }
+  }
+}

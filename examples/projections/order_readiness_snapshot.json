@@ -1,0 +1,13 @@
+{
+  "schema_version": "0.4",
+  "contract_id": "operational.readiness_snapshot",
+  "contract_version": "v1",
+  "fixture_status": "example",
+  "payload": {
+    "order_id": "order_001",
+    "readiness_status": "warning",
+    "is_ready_for_next_stage": false,
+    "missing_references": ["missing_calculation"],
+    "waiting_reasons": []
+  }
+}

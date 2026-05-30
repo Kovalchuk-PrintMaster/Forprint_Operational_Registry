@@ -1,0 +1,19 @@
+{
+  "schema_version": "0.4",
+  "contract_id": "operational.order_state_projection",
+  "contract_version": "v1",
+  "fixture_status": "example",
+  "view_target": "crm_future",
+  "not_dashboard_layout": true,
+  "payload": {
+    "order_id": "order_001",
+    "client_id": "client_001",
+    "order_status": "needs_review",
+    "quote_ref": "quote_001",
+    "accounting_refs": {
+      "accounting_invoice_ref": "invoice_001"
+    },
+    "active_blockers_count": 1,
+    "is_blocked": true
+  }
+}

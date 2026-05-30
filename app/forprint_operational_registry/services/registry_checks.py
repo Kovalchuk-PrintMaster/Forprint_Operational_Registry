@@ -24,6 +24,11 @@ REQUIRED_DOCS: tuple[str, ...] = (
     "docs/architecture/handoff_readiness.md",
     "docs/architecture/module_reference_conventions.md",
     "docs/architecture/order_readiness.md",
+    "docs/integration/public_operational_surface.md",
+    "docs/integration/command_result_model.md",
+    "docs/integration/reference_ready_contracts.md",
+    "docs/integration/dependent_module_usage.md",
+    "docs/integration/versioning_and_compatibility.md",
 )
 
 REQUIRED_MACRO_PACK_FILES: tuple[str, ...] = (
@@ -156,6 +161,34 @@ FORBIDDEN_REAL_INTEGRATION_PATHS: tuple[str, ...] = (
     "app/forprint_operational_registry/adapters/telegram",
     "app/forprint_operational_registry/adapters/accounting",
     "app/forprint_operational_registry/adapters/calculator",
+)
+
+REQUIRED_V04_FILES: tuple[str, ...] = (
+    "app/forprint_operational_registry/dto/errors.py",
+    "app/forprint_operational_registry/dto/results.py",
+    "app/forprint_operational_registry/services/operational_registry_facade.py",
+    "docs/integration/public_operational_surface.md",
+    "docs/integration/command_result_model.md",
+    "docs/integration/reference_ready_contracts.md",
+    "docs/integration/dependent_module_usage.md",
+    "docs/integration/versioning_and_compatibility.md",
+)
+
+REQUIRED_MODULE_HANDOFF_EXAMPLES: tuple[str, ...] = (
+    "examples/module_handoffs/telegram_bot/order_intake_draft_to_create_order.json",
+    "examples/module_handoffs/crm/manual_order_create_command.json",
+    "examples/module_handoffs/gateway/operational_command_envelope_create_order.json",
+    "examples/module_handoffs/calculator/attach_quote_result_reference.json",
+    "examples/module_handoffs/accounting/payment_reference_confirmed.json",
+    "examples/module_handoffs/prepress/prepress_blocker_created.json",
+)
+
+REQUIRED_QUERY_RESULT_EXAMPLES: tuple[str, ...] = (
+    "examples/query_results/order_state_for_crm.json",
+    "examples/query_results/order_state_for_telegram.json",
+    "examples/query_results/task_board_for_crm.json",
+    "examples/query_results/order_timeline_for_operator.json",
+    "examples/query_results/order_readiness_snapshot.json",
 )
 
 
@@ -450,5 +483,76 @@ def validate_projection_fixtures(project_root: Path) -> list[str]:
         data = json_load(path)
         if data.get("fixture_status") != "example":
             errors.append(f"{filename}: fixture_status must be example")
+
+    return errors
+
+
+def validate_v04_files(project_root: Path) -> list[str]:
+    """Validate v0.4 reference-ready integration surface files."""
+
+    errors: list[str] = []
+
+    for relative_path in REQUIRED_V04_FILES:
+        if not (project_root / relative_path).exists():
+            errors.append(f"required v0.4 file is missing: {relative_path}")
+
+    return errors
+
+
+def validate_module_handoff_examples(project_root: Path) -> list[str]:
+    """Validate module handoff examples."""
+
+    errors: list[str] = []
+
+    for relative_path in REQUIRED_MODULE_HANDOFF_EXAMPLES:
+        path = project_root / relative_path
+        if not path.exists():
+            errors.append(f"module handoff example is missing: {relative_path}")
+            continue
+
+        data = json_load(path)
+        if data.get("fixture_status") != "example":
+            errors.append(f"{relative_path}: fixture_status must be example")
+
+        if data.get("real_integration") is not False:
+            errors.append(f"{relative_path}: real_integration must be false")
+
+        if data.get("transport_owner_future") != "forprint_integration_gateway":
+            errors.append(f"{relative_path}: transport owner must be future Gateway")
+
+        if data.get("canonical_contract_truth_future") != "forprint_library":
+            errors.append(f"{relative_path}: canonical truth must be future Library")
+
+        if "schema_version" not in data:
+            errors.append(f"{relative_path}: schema_version is missing")
+
+        if "contract_version" not in data:
+            errors.append(f"{relative_path}: contract_version is missing")
+
+    return errors
+
+
+def validate_query_result_examples(project_root: Path) -> list[str]:
+    """Validate query/projection result examples."""
+
+    errors: list[str] = []
+
+    for relative_path in REQUIRED_QUERY_RESULT_EXAMPLES:
+        path = project_root / relative_path
+        if not path.exists():
+            errors.append(f"query result example is missing: {relative_path}")
+            continue
+
+        data = json_load(path)
+        if data.get("fixture_status") != "example":
+            errors.append(f"{relative_path}: fixture_status must be example")
+
+        if "schema_version" not in data:
+            errors.append(f"{relative_path}: schema_version is missing")
+
+        payload = data.get("payload", {})
+        forbidden = {"payment_truth", "invoice_truth", "product_catalog", "material_catalog"}
+        if isinstance(payload, dict) and forbidden.intersection(payload):
+            errors.append(f"{relative_path}: contains forbidden foreign truth fields")
 
     return errors

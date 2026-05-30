@@ -1,0 +1,25 @@
+{
+  "schema_version": "0.4",
+  "contract_id": "operational.command_envelope",
+  "contract_version": "v1",
+  "producer": "forprint_integration_gateway_future",
+  "consumer": "forprint_operational_registry",
+  "fixture_status": "example",
+  "real_integration": false,
+  "transport_owner_future": "forprint_integration_gateway",
+  "canonical_contract_truth_future": "forprint_library",
+  "envelope": {
+    "command_id": "cmd_001",
+    "correlation_id": "corr_001",
+    "idempotency_key": "idem_001",
+    "source_module": "forprint_crm_future",
+    "source_channel": "crm_manual",
+    "actor_ref": "operator_001",
+    "target_entity_type": "order",
+    "target_entity_id": "order_001",
+    "command_type": "operational.create_order.v1",
+    "payload": {
+      "client_id": "client_001"
+    }
+  }
+}

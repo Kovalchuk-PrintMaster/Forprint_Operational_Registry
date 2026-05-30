@@ -1,0 +1,16 @@
+{
+  "schema_version": "0.4",
+  "contract_id": "operational.timeline_projection",
+  "contract_version": "v1",
+  "fixture_status": "example",
+  "view_target": "operator_future",
+  "payload": {
+    "entity_type": "order",
+    "entity_id": "order_001",
+    "events": [
+      "order_created",
+      "order_status_changed",
+      "operational_note_added"
+    ]
+  }
+}
