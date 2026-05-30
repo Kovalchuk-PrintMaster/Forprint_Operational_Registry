@@ -1,4 +1,4 @@
-"""Generic order lifecycle service for Operational Registry v0.1."""
+"""Generic order lifecycle service for Operational Registry v0.3."""
 
 from datetime import UTC, datetime
 from typing import Protocol
@@ -31,7 +31,12 @@ GENERIC_ORDER_LIFECYCLE_V0: dict[str, set[str]] = {
         "blocked",
         "cancelled",
     },
-    "payment_reference_confirmed": {"in_prepress", "ready_for_production", "blocked", "cancelled"},
+    "payment_reference_confirmed": {
+        "in_prepress",
+        "ready_for_production",
+        "blocked",
+        "cancelled",
+    },
     "in_prepress": {"ready_for_production", "needs_review", "blocked", "cancelled"},
     "ready_for_production": {"in_production", "blocked", "cancelled"},
     "in_production": {"ready_for_pickup", "blocked", "cancelled"},
@@ -41,14 +46,49 @@ GENERIC_ORDER_LIFECYCLE_V0: dict[str, set[str]] = {
     "cancelled": set(),
 }
 
+TERMINAL_ORDER_STATUSES: tuple[str, ...] = ("completed", "cancelled")
 
-def is_valid_transition(from_status: str, to_status: str) -> bool:
-    """Return whether a generic v0.1 status transition is allowed."""
+
+def get_allowed_order_transitions(from_status: str) -> tuple[str, ...]:
+    """Return allowed target statuses for current status."""
+
+    ensure_allowed_order_status(from_status)
+    return tuple(sorted(GENERIC_ORDER_LIFECYCLE_V0[from_status]))
+
+
+def is_terminal_order_status(status: str) -> bool:
+    """Return whether status is terminal."""
+
+    ensure_allowed_order_status(status)
+    return status in TERMINAL_ORDER_STATUSES
+
+
+def validate_order_transition(from_status: str, to_status: str) -> None:
+    """Validate generic v0 order transition."""
 
     ensure_allowed_order_status(from_status)
     ensure_allowed_order_status(to_status)
 
-    return to_status in GENERIC_ORDER_LIFECYCLE_V0[from_status]
+    if from_status == to_status:
+        raise InvalidOrderTransition(f"Order is already in status: {to_status}")
+
+    if is_terminal_order_status(from_status):
+        raise InvalidOrderTransition(f"Cannot transition from terminal order status: {from_status}")
+
+    allowed_transitions = GENERIC_ORDER_LIFECYCLE_V0[from_status]
+    if to_status not in allowed_transitions:
+        raise InvalidOrderTransition(f"Invalid order transition: {from_status} -> {to_status}")
+
+
+def is_valid_transition(from_status: str, to_status: str) -> bool:
+    """Return whether a generic v0.3 status transition is allowed."""
+
+    try:
+        validate_order_transition(from_status, to_status)
+    except InvalidOrderTransition:
+        return False
+
+    return True
 
 
 def transition_order_status(
@@ -61,9 +101,7 @@ def transition_order_status(
     """Transition order status and append an immutable OperationalEvent."""
 
     from_status = order.order_status
-
-    if not is_valid_transition(from_status, to_status):
-        raise InvalidOrderTransition(f"Invalid order transition: {from_status} -> {to_status}")
+    validate_order_transition(from_status, to_status)
 
     order.order_status = to_status
     order.workflow_status = to_status

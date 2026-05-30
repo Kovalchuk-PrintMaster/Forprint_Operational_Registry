@@ -32,3 +32,22 @@ recommended_source_channels:
 
 forbidden_operational_statuses:
   - paid
+
+operational_blocker_types:
+  - missing_client_data
+  - missing_calculation
+  - waiting_payment_reference
+  - waiting_prepress_check
+  - waiting_operator_review
+  - material_availability_unknown
+  - manual_review_required
+
+operational_blocker_statuses:
+  - open
+  - resolved
+
+operational_blocker_severities:
+  - low
+  - medium
+  - high
+  - critical

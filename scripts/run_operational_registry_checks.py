@@ -21,7 +21,9 @@ if str(APP_PATH) not in sys.path:
     sys.path.insert(0, str(APP_PATH))
 
 from forprint_operational_registry.services.registry_checks import (  # noqa: E402
+    validate_blocker_config,
     validate_checkpoint_a_files,
+    validate_checkpoint_b_files,
     validate_foreign_import_boundary,
     validate_manifest,
     validate_no_production_api,
@@ -200,6 +202,22 @@ def build_check_report(run_external: bool = True) -> dict[str, object]:
             name="Foreign import boundary",
             expected_result="No real foreign runtime imports or integration adapters",
             errors=validate_foreign_import_boundary(PROJECT_ROOT),
+        )
+    )
+
+    steps.append(
+        run_internal_check(
+            name="Checkpoint B files",
+            expected_result="Lifecycle/blocker files exist",
+            errors=validate_checkpoint_b_files(PROJECT_ROOT),
+        )
+    )
+
+    steps.append(
+        run_internal_check(
+            name="Operational blocker config",
+            expected_result="Operational blocker config is valid",
+            errors=validate_blocker_config(PROJECT_ROOT),
         )
     )
 

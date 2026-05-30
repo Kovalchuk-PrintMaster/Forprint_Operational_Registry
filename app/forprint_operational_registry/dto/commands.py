@@ -112,3 +112,29 @@ class AppendOperationalEventCommand:
     actor_ref: str
     source_module: str
     payload: dict[str, Any] = field(default_factory=dict)
+
+
+@dataclass(frozen=True, slots=True)
+class CreateOperationalBlockerCommand:
+    """Create lightweight operational blocker."""
+
+    blocker_id: str
+    entity_type: str
+    entity_id: str
+    blocker_type: str
+    reason: str
+    source_module: str = "forprint_operational_registry"
+    severity: str = "medium"
+    metadata: dict[str, Any] = field(default_factory=dict)
+    actor_ref: str = "system"
+
+
+@dataclass(frozen=True, slots=True)
+class ResolveOperationalBlockerCommand:
+    """Resolve lightweight operational blocker."""
+
+    blocker_id: str
+    actor_ref: str
+    source_module: str = "forprint_operational_registry"
+    reason: str | None = None
+    metadata: dict[str, Any] = field(default_factory=dict)

@@ -2,6 +2,7 @@
 
 from typing import Protocol
 
+from forprint_operational_registry.models.blockers import OperationalBlocker
 from forprint_operational_registry.models.client import ClientRecord
 from forprint_operational_registry.models.event import OperationalEvent
 from forprint_operational_registry.models.note import OperationalNote
@@ -59,3 +60,23 @@ class OperationalNoteRepository(Protocol):
     def get(self, note_id: str) -> OperationalNote | None: ...
 
     def list_by_order(self, order_id: str) -> tuple[OperationalNote, ...]: ...
+
+
+class OperationalBlockerRepository(Protocol):
+    """Repository interface for lightweight operational blockers."""
+
+    def add(self, blocker: OperationalBlocker) -> None: ...
+
+    def save(self, blocker: OperationalBlocker) -> None: ...
+
+    def get(self, blocker_id: str) -> OperationalBlocker | None: ...
+
+    def list_by_entity(
+        self, entity_type: str, entity_id: str
+    ) -> tuple[OperationalBlocker, ...]: ...
+
+    def list_open_by_entity(
+        self,
+        entity_type: str,
+        entity_id: str,
+    ) -> tuple[OperationalBlocker, ...]: ...

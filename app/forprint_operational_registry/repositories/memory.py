@@ -2,6 +2,7 @@
 
 from dataclasses import dataclass, field
 
+from forprint_operational_registry.models.blockers import OperationalBlocker
 from forprint_operational_registry.models.client import ClientRecord
 from forprint_operational_registry.models.event import OperationalEvent
 from forprint_operational_registry.models.note import OperationalNote
@@ -93,9 +94,50 @@ class InMemoryOperationalNoteRepository:
         return tuple(note for note in self._notes.values() if note.order_id == order_id)
 
 
+class InMemoryOperationalBlockerRepository:
+    """In-memory operational blocker repository."""
+
+    def __init__(self) -> None:
+        self._blockers: dict[str, OperationalBlocker] = {}
+
+    def add(self, blocker: OperationalBlocker) -> None:
+        self._blockers[blocker.blocker_id] = blocker
+
+    def save(self, blocker: OperationalBlocker) -> None:
+        self._blockers[blocker.blocker_id] = blocker
+
+    def get(self, blocker_id: str) -> OperationalBlocker | None:
+        return self._blockers.get(blocker_id)
+
+    def list_by_entity(
+        self,
+        entity_type: str,
+        entity_id: str,
+    ) -> tuple[OperationalBlocker, ...]:
+        return tuple(
+            blocker
+            for blocker in self._blockers.values()
+            if blocker.entity_type == entity_type and blocker.entity_id == entity_id
+        )
+
+    def list_open_by_entity(
+        self,
+        entity_type: str,
+        entity_id: str,
+    ) -> tuple[OperationalBlocker, ...]:
+        return tuple(
+            blocker
+            for blocker in self.list_by_entity(
+                entity_type=entity_type,
+                entity_id=entity_id,
+            )
+            if blocker.status == "open"
+        )
+
+
 @dataclass(slots=True)
 class InMemoryRepositoryBundle:
-    """Convenience bundle for tests and local v0.2 development."""
+    """Convenience bundle for tests and local v0.2/v0.3 development."""
 
     clients: InMemoryClientRepository = field(default_factory=InMemoryClientRepository)
     orders: InMemoryOrderRepository = field(default_factory=InMemoryOrderRepository)
@@ -105,6 +147,9 @@ class InMemoryRepositoryBundle:
     )
     notes: InMemoryOperationalNoteRepository = field(
         default_factory=InMemoryOperationalNoteRepository
+    )
+    blockers: InMemoryOperationalBlockerRepository = field(
+        default_factory=InMemoryOperationalBlockerRepository
     )
 
 

@@ -84,6 +84,23 @@ REQUIRED_CHECKPOINT_A_FILES: tuple[str, ...] = (
     "docs/architecture/reference_conventions.md",
 )
 
+REQUIRED_CHECKPOINT_B_FILES: tuple[str, ...] = (
+    "app/forprint_operational_registry/models/blockers.py",
+    "app/forprint_operational_registry/services/blocker_registry.py",
+    "docs/architecture/lifecycle_validation.md",
+    "docs/architecture/operational_blockers.md",
+)
+
+REQUIRED_BLOCKER_TYPES: tuple[str, ...] = (
+    "missing_client_data",
+    "missing_calculation",
+    "waiting_payment_reference",
+    "waiting_prepress_check",
+    "waiting_operator_review",
+    "material_availability_unknown",
+    "manual_review_required",
+)
+
 REQUIRED_PLACEHOLDER_CONTRACTS: tuple[str, ...] = (
     "operational.create_order.v1.yaml",
     "operational.change_order_status.v1.yaml",
@@ -300,5 +317,41 @@ def validate_foreign_import_boundary(project_root: Path) -> list[str]:
     for relative_path in FORBIDDEN_REAL_INTEGRATION_PATHS:
         if (project_root / relative_path).exists():
             errors.append(f"real integration path is not approved in v0.3: {relative_path}")
+
+    return errors
+
+
+def validate_checkpoint_b_files(project_root: Path) -> list[str]:
+    """Validate Checkpoint B files exist."""
+
+    errors: list[str] = []
+
+    for relative_path in REQUIRED_CHECKPOINT_B_FILES:
+        if not (project_root / relative_path).exists():
+            errors.append(f"required Checkpoint B file is missing: {relative_path}")
+
+    return errors
+
+
+def validate_blocker_config(project_root: Path) -> list[str]:
+    """Validate operational blocker config."""
+
+    errors: list[str] = []
+    status_path = project_root / "app/forprint_operational_registry/config/statuses.yaml"
+
+    if not status_path.exists():
+        return ["status config is missing"]
+
+    config = load_yaml(status_path)
+    blocker_types = set(config.get("operational_blocker_types", []))
+    blocker_statuses = set(config.get("operational_blocker_statuses", []))
+
+    for blocker_type in REQUIRED_BLOCKER_TYPES:
+        if blocker_type not in blocker_types:
+            errors.append(f"operational blocker type is missing: {blocker_type}")
+
+    for blocker_status in ("open", "resolved"):
+        if blocker_status not in blocker_statuses:
+            errors.append(f"operational blocker status is missing: {blocker_status}")
 
     return errors
