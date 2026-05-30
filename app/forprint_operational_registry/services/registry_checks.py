@@ -34,6 +34,7 @@ REQUIRED_DOCS: tuple[str, ...] = (
     "docs/storage/postgresql_future_path.md",
     "docs/storage/repository_storage_boundary.md",
     "docs/storage/persistence_safety_rules.md",
+    "docs/architecture/paused_after_v0_5.md",
 )
 
 REQUIRED_MACRO_PACK_FILES: tuple[str, ...] = (
