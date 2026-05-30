@@ -2,7 +2,7 @@ module_id: forprint_operational_registry
 module_name: ForPrint Operational Registry
 role: operational_truth_registry
 status: bootstrap_development
-version: 0.1.0
+version: 0.2.0
 
 owns:
   - client_record
@@ -53,6 +53,9 @@ allowed_reference_fields:
   - payment_status_reference
   - production_ref
   - prepress_task_ref
+  - calculator_result_ref
+  - prepress_refs
+  - source_ref
 
 recommended_source_channels:
   - telegram_bot

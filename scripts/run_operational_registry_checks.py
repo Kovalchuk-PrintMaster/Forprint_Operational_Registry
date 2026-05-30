@@ -22,8 +22,10 @@ if str(APP_PATH) not in sys.path:
 
 from forprint_operational_registry.services.registry_checks import (  # noqa: E402
     validate_manifest,
+    validate_no_production_api,
     validate_required_docs,
     validate_status_config,
+    validate_v02_boundary_files,
 )
 
 console = Console()
@@ -155,6 +157,22 @@ def build_check_report(run_external: bool = True) -> dict[str, object]:
             name="Status config",
             expected_result="Статуси відповідають Blueprint v0.1",
             errors=validate_status_config(PROJECT_ROOT),
+        )
+    )
+
+    steps.append(
+        run_internal_check(
+            name="Command/query service boundary",
+            expected_result="DTO/repository/service файли v0.2 існують",
+            errors=validate_v02_boundary_files(PROJECT_ROOT),
+        )
+    )
+
+    steps.append(
+        run_internal_check(
+            name="No production API",
+            expected_result="Production API не додано у v0.2",
+            errors=validate_no_production_api(PROJECT_ROOT),
         )
     )
 

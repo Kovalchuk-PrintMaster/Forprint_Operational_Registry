@@ -10,6 +10,11 @@ REQUIRED_DOCS: tuple[str, ...] = (
     "docs/architecture/operational_vs_accounting_registry.md",
     "docs/architecture/operational_vs_crm.md",
     "docs/architecture/order_lifecycle_v0.md",
+    "docs/architecture/command_query_boundary.md",
+    "docs/architecture/repository_boundary.md",
+    "docs/architecture/service_layer.md",
+    "docs/architecture/future_integration_contracts.md",
+    "docs/architecture/operational_notes.md",
 )
 
 REQUIRED_MUST_NOT_OWN: tuple[str, ...] = (
@@ -52,6 +57,27 @@ RECOMMENDED_SOURCE_CHANNELS: tuple[str, ...] = (
     "gateway_import",
     "internal_module",
     "legacy_import",
+)
+
+REQUIRED_V02_FILES: tuple[str, ...] = (
+    "app/forprint_operational_registry/dto/commands.py",
+    "app/forprint_operational_registry/dto/queries.py",
+    "app/forprint_operational_registry/repositories/interfaces.py",
+    "app/forprint_operational_registry/repositories/memory.py",
+    "app/forprint_operational_registry/models/note.py",
+    "app/forprint_operational_registry/services/client_registry.py",
+    "app/forprint_operational_registry/services/order_registry.py",
+    "app/forprint_operational_registry/services/task_registry.py",
+    "app/forprint_operational_registry/services/event_registry.py",
+    "app/forprint_operational_registry/services/note_registry.py",
+    "app/forprint_operational_registry/services/order_queries.py",
+)
+
+FORBIDDEN_PRODUCTION_API_PATHS: tuple[str, ...] = (
+    "app/forprint_operational_registry/api",
+    "app/forprint_operational_registry/routes",
+    "app/forprint_operational_registry/routers",
+    "app/forprint_operational_registry/http",
 )
 
 
@@ -105,7 +131,7 @@ def validate_required_docs(project_root: Path) -> list[str]:
 
 
 def validate_status_config(project_root: Path) -> list[str]:
-    """Validate status config respects Blueprint v0.1 terminology."""
+    """Validate status config respects Blueprint v0.1/v0.2 terminology."""
 
     errors: list[str] = []
     status_path = project_root / "app/forprint_operational_registry/config/statuses.yaml"
@@ -127,5 +153,29 @@ def validate_status_config(project_root: Path) -> list[str]:
     for channel in RECOMMENDED_SOURCE_CHANNELS:
         if channel not in source_channels:
             errors.append(f"recommended source channel is missing: {channel}")
+
+    return errors
+
+
+def validate_v02_boundary_files(project_root: Path) -> list[str]:
+    """Validate v0.2 command/query/repository/service files exist."""
+
+    errors: list[str] = []
+
+    for relative_path in REQUIRED_V02_FILES:
+        if not (project_root / relative_path).exists():
+            errors.append(f"required v0.2 boundary file is missing: {relative_path}")
+
+    return errors
+
+
+def validate_no_production_api(project_root: Path) -> list[str]:
+    """Validate v0.2 did not introduce production API paths."""
+
+    errors: list[str] = []
+
+    for relative_path in FORBIDDEN_PRODUCTION_API_PATHS:
+        if (project_root / relative_path).exists():
+            errors.append(f"production API path is not approved in v0.2: {relative_path}")
 
     return errors

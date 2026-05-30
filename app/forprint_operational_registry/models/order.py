@@ -30,6 +30,7 @@ class OrderRecord:
     quote_ref: str | None = None
     accounting_refs: dict[str, Any] = field(default_factory=dict)
     production_refs: dict[str, Any] = field(default_factory=dict)
+    prepress_refs: dict[str, Any] = field(default_factory=dict)
     metadata: dict[str, Any] = field(default_factory=dict)
     created_at: datetime = field(default_factory=utc_now)
     updated_at: datetime = field(default_factory=utc_now)
