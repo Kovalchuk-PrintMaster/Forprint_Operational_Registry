@@ -1,7 +1,7 @@
 PYTHON ?= .venv_operational_registry/bin/python
 PIP ?= .venv_operational_registry/bin/pip
 
-.PHONY: install test lint check check-report format clean
+.PHONY: install test lint check check-report format clean client-card-preview
 
 install:
 	python3.11 -m venv .venv_operational_registry
@@ -28,3 +28,6 @@ clean:
 	rm -rf .pytest_cache .ruff_cache
 	find . -type d -name "__pycache__" -prune -exec rm -rf {} +
 	find . -type d -name "*.egg-info" -prune -exec rm -rf {} +
+
+client-card-preview:
+	$(PYTHON) scripts/client_card_preview.py

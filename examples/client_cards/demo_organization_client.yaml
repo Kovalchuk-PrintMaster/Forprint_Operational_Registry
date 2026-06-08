@@ -1,0 +1,168 @@
+fixture_status: example
+contains_real_customer_data: false
+purpose: demo_organization_client_card
+
+client_account:
+  client_account_id: acc_demo_org_001
+  account_type: organization
+  display_name: Demo Medical Group
+  common_name: Demo Medical
+  legal_name: Demo Legal Entity LLC
+  status: active
+  client_group_id: grp_demo_001
+  is_customer: true
+  is_supplier: false
+  is_resident: true
+  primary_contact_method_id: cm_demo_phone_001
+  primary_address_id: addr_demo_delivery_001
+  source_system: sanitized_demo
+  legacy_raw_name: "ТОВ Демо Медікал / raw imported name"
+  notes: "Synthetic demo only. No real customer data."
+
+client_groups:
+  - client_group_id: grp_demo_001
+    display_name: Demo Business Group
+    legal_group_name: Demo Group LLC
+    status: active
+
+contact_persons:
+  - contact_person_id: cp_demo_manager_001
+    full_name: Demo Manager
+    preferred_name: Manager
+    position: Purchasing Manager
+    status: active
+  - contact_person_id: cp_demo_accounting_001
+    full_name: Demo Accountant
+    preferred_name: Accounting
+    position: Accountant
+    status: active
+
+contact_methods:
+  - contact_method_id: cm_demo_phone_001
+    method_type: phone
+    kind: manager
+    raw_value: "+380 XX XXX XX XX"
+    normalized_value: "+380XXXXXXXXX"
+    presentation: "+380 XX XXX XX XX"
+    is_primary: true
+    status: active
+    source_system: sanitized_demo
+  - contact_method_id: cm_demo_email_001
+    method_type: email
+    kind: accounting
+    raw_value: demo-accounting@example.test
+    normalized_value: demo-accounting@example.test
+    presentation: demo-accounting@example.test
+    is_primary: false
+    status: active
+    source_system: sanitized_demo
+
+account_contact_links:
+  - account_contact_link_id: acl_demo_001
+    client_account_id: acc_demo_org_001
+    contact_person_id: cp_demo_manager_001
+    contact_method_id: cm_demo_phone_001
+    role: manager
+    valid_from: "2026-01-01T00:00:00+00:00"
+    valid_to:
+    is_primary: true
+    status: active
+    source_system: sanitized_demo
+  - account_contact_link_id: acl_demo_002
+    client_account_id: acc_demo_org_001
+    contact_person_id: cp_demo_accounting_001
+    contact_method_id: cm_demo_email_001
+    role: accounting
+    valid_from: "2026-01-01T00:00:00+00:00"
+    valid_to:
+    is_primary: false
+    status: active
+    source_system: sanitized_demo
+
+addresses:
+  - client_address_id: addr_demo_delivery_001
+    client_account_id: acc_demo_org_001
+    address_type: nova_poshta
+    raw_presentation: "Nova Poshta demo branch, sanitized"
+    normalized_address:
+    delivery_service: nova_poshta
+    delivery_notes: "Synthetic delivery note"
+    is_primary: true
+    status: active
+    source_system: sanitized_demo
+
+legal_profiles:
+  - legal_entity_profile_id: lep_demo_001
+    client_account_id: acc_demo_org_001
+    legal_entity_type: legal_entity
+    legal_name: Demo Legal Entity LLC
+    edrpou: "00000000"
+    tax_id:
+    vat_number:
+    tax_scheme: general
+    registration_country: UA
+    is_vat_payer: false
+
+external_accounting_references:
+  - external_reference_id: ext_1c_demo_counterparty_001
+    entity_type: counterparty
+    internal_entity_id: acc_demo_org_001
+    source_system: 1c_bas
+    external_code: "000000001"
+    external_ref: 1c-demo-ref-counterparty
+    external_name: Demo 1C Counterparty
+    sync_status: seen
+    raw_payload:
+      raw_1c_code: "000000001"
+      raw_name: "Demo raw 1C counterparty name"
+
+contracts:
+  - client_contract_id: contract_demo_001
+    client_account_id: acc_demo_org_001
+    contract_name: Main demo contract
+    contract_type: main
+    settlement_mode: standard
+    contract_number: DEMO-001
+    contract_date: "2026-01-01T00:00:00+00:00"
+    our_legal_entity_ref: our_legal_entity_demo
+    status: active
+    source_system: sanitized_demo
+
+bank_accounts:
+  - client_bank_account_id: bank_demo_001
+    client_account_id: acc_demo_org_001
+    display_name: Demo IBAN
+    bank_name: Demo Bank
+    iban: UA000000000000000000000000000
+    account_number:
+    is_primary: true
+    status: active
+    source_system: sanitized_demo
+
+preferences:
+  - client_preference_id: pref_demo_001
+    client_account_id: acc_demo_org_001
+    preference_type: preferred_materials
+    value: "Synthetic preferred material example"
+    source_system: sanitized_demo
+    status: active
+    notes: "No real customer preference"
+
+notes:
+  - client_note_id: note_demo_001
+    client_account_id: acc_demo_org_001
+    note_type: production
+    content: "Synthetic production memory preserved from legacy comment."
+    source_system: sanitized_demo
+
+legacy_mappings:
+  - legacy_mapping_id: legacy_demo_001
+    source_system: telegram_bot_legacy
+    source_table: clients
+    source_id: legacy_demo_001
+    client_account_id: acc_demo_org_001
+    raw_name: "Raw legacy demo name"
+    raw_phone: "+380 XX XXX XX XX"
+    raw_payload:
+      telegram_id: "demo_telegram_id"
+      client_source: "demo"

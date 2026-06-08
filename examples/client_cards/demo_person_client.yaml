@@ -1,0 +1,70 @@
+fixture_status: example
+contains_real_customer_data: false
+purpose: demo_person_client_card
+
+client_account:
+  client_account_id: acc_demo_person_001
+  account_type: person
+  display_name: Demo Person
+  common_name: Demo
+  legal_name:
+  status: active
+  client_group_id:
+  is_customer: true
+  is_supplier: false
+  is_resident: true
+  primary_contact_method_id: cm_demo_person_phone_001
+  primary_address_id:
+  source_system: sanitized_demo
+  legacy_raw_name: "Demo Person raw imported name"
+  notes: "Synthetic person example only."
+
+contact_persons:
+  - contact_person_id: cp_demo_person_001
+    full_name: Demo Person
+    preferred_name: Demo
+    position:
+    status: active
+
+contact_methods:
+  - contact_method_id: cm_demo_person_phone_001
+    method_type: phone
+    kind: main
+    raw_value: "+380 YY YYY YY YY"
+    normalized_value: "+380YYYYYYYYY"
+    presentation: "+380 YY YYY YY YY"
+    is_primary: true
+    status: active
+    source_system: sanitized_demo
+
+account_contact_links:
+  - account_contact_link_id: acl_demo_person_001
+    client_account_id: acc_demo_person_001
+    contact_person_id: cp_demo_person_001
+    contact_method_id: cm_demo_person_phone_001
+    role: owner
+    valid_from: "2026-01-01T00:00:00+00:00"
+    valid_to:
+    is_primary: true
+    status: active
+    source_system: sanitized_demo
+
+addresses: []
+legal_profiles: []
+external_accounting_references: []
+contracts: []
+bank_accounts: []
+preferences:
+  - client_preference_id: pref_demo_person_001
+    client_account_id: acc_demo_person_001
+    preference_type: communication_style
+    value: "Synthetic communication preference"
+    source_system: sanitized_demo
+    status: active
+notes:
+  - client_note_id: note_demo_person_001
+    client_account_id: acc_demo_person_001
+    note_type: internal
+    content: "Synthetic internal note."
+    source_system: sanitized_demo
+legacy_mappings: []

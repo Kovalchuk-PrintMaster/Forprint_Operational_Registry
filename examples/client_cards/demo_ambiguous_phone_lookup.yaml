@@ -1,0 +1,48 @@
+fixture_status: example
+contains_real_customer_data: false
+purpose: demo_ambiguous_phone_lookup
+
+lookup_key:
+  lookup_type: normalized_phone
+  normalized_value: "+380ZZZZZZZZZ"
+
+client_accounts:
+  - client_account_id: acc_demo_company_001
+    account_type: organization
+    display_name: Demo Company Account
+    status: active
+  - client_account_id: acc_demo_fop_001
+    account_type: fop
+    display_name: Demo FOP Account
+    status: active
+
+contact_methods:
+  - contact_method_id: cm_shared_phone_001
+    method_type: phone
+    kind: manager
+    raw_value: "+380 ZZ ZZZ ZZ ZZ"
+    normalized_value: "+380ZZZZZZZZZ"
+    presentation: "+380 ZZ ZZZ ZZ ZZ"
+    is_primary: true
+    status: active
+    source_system: sanitized_demo
+
+account_contact_links:
+  - account_contact_link_id: acl_shared_company_001
+    client_account_id: acc_demo_company_001
+    contact_method_id: cm_shared_phone_001
+    role: manager
+    valid_from: "2026-01-01T00:00:00+00:00"
+    valid_to:
+    is_primary: true
+    status: active
+    source_system: sanitized_demo
+  - account_contact_link_id: acl_shared_fop_001
+    client_account_id: acc_demo_fop_001
+    contact_method_id: cm_shared_phone_001
+    role: owner
+    valid_from: "2026-01-01T00:00:00+00:00"
+    valid_to:
+    is_primary: true
+    status: active
+    source_system: sanitized_demo
