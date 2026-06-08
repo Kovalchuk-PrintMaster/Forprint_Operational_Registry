@@ -1,0 +1,328 @@
+"""Order / workflow / projection foundation models.
+
+Checkpoint A adds flexible operational order and reference concepts only.
+
+No Calculator runtime integration.
+No Library runtime integration.
+No Accounting runtime integration.
+No Warehouse runtime integration.
+No production API.
+"""
+
+from collections.abc import Mapping
+from dataclasses import dataclass, field
+from datetime import UTC, datetime
+from types import MappingProxyType
+from typing import Any
+
+ORDER_STATUSES: tuple[str, ...] = (
+    "draft",
+    "new",
+    "needs_review",
+    "quote_pending",
+    "quote_accepted",
+    "payment_reference_pending",
+    "payment_reference_confirmed",
+    "in_workflow",
+    "in_production",
+    "completed",
+    "cancelled",
+    "blocked",
+    "unknown",
+)
+
+PAYMENT_PROJECTION_STATUSES: tuple[str, ...] = (
+    "not_invoiced",
+    "invoice_reference_pending",
+    "unpaid",
+    "partially_paid",
+    "paid_reference_confirmed",
+    "overdue",
+    "cancelled",
+    "unknown",
+)
+
+PRODUCTION_STATUSES: tuple[str, ...] = (
+    "not_started",
+    "waiting_prepress",
+    "ready_for_production",
+    "in_production",
+    "ready_for_pickup",
+    "completed",
+    "blocked",
+    "cancelled",
+    "unknown",
+)
+
+WORKFLOW_STATUSES: tuple[str, ...] = (
+    "not_started",
+    "ready",
+    "in_progress",
+    "blocked",
+    "waiting_external_contractor",
+    "completed",
+    "cancelled",
+    "late",
+    "manual_review_required",
+    "unknown",
+)
+
+PRODUCT_SERVICE_RESOLUTION_STATUSES: tuple[str, ...] = (
+    "draft_display_only",
+    "library_reference_pending",
+    "library_reference_confirmed",
+    "ambiguous_manual_review_required",
+    "deprecated_reference",
+    "unknown",
+)
+
+CALCULATOR_REFERENCE_VALIDATION_STATUSES: tuple[str, ...] = (
+    "not_validated",
+    "reference_received",
+    "schema_version_pending",
+    "validation_passed",
+    "validation_failed",
+    "unknown",
+)
+
+FORBIDDEN_ORDER_PAYLOAD_KEYS: tuple[str, ...] = (
+    "calculator_formula",
+    "pricing_rule",
+    "price_calculation_logic",
+    "accounting_posting",
+    "one_c_write_result",
+    "warehouse_stock_truth",
+    "warehouse_reservation_truth",
+    "library_canonical_product_definition",
+    "telegram_runtime_ui",
+    "crm_dashboard_state",
+)
+
+
+def utc_now() -> datetime:
+    """Return timezone-aware UTC timestamp."""
+
+    return datetime.now(UTC)
+
+
+def freeze_mapping(value: Mapping[str, Any] | None) -> Mapping[str, Any]:
+    """Freeze mapping to avoid accidental mutation."""
+
+    return MappingProxyType(dict(value or {}))
+
+
+def ensure_in(value: str, allowed: tuple[str, ...], field_name: str) -> None:
+    """Validate local draft enum value."""
+
+    if value not in allowed:
+        raise ValueError(f"Unknown {field_name}: {value}")
+
+
+def ensure_no_forbidden_payload_keys(payload: Mapping[str, Any]) -> None:
+    """Reject obvious foreign-domain ownership markers."""
+
+    forbidden_keys = set(payload).intersection(FORBIDDEN_ORDER_PAYLOAD_KEYS)
+    if forbidden_keys:
+        raise ValueError(
+            "Operational order foundation must not own foreign-domain truth. "
+            f"Forbidden payload keys: {sorted(forbidden_keys)}"
+        )
+
+
+@dataclass(slots=True)
+class OperationalOrder:
+    """Internal ForPrint operational order record.
+
+    Order belongs to ClientAccount.
+    ClientGroup is analytics/grouping only.
+    Calculator refs are references only.
+    Operational Registry must not calculate final prices.
+    Accounting payment truth is referenced, not owned here.
+    """
+
+    order_id: str
+    client_account_id: str
+    client_group_id: str | None = None
+    source_request_id: str | None = None
+    calculator_output_package_id: str | None = None
+    calculator_calculation_id: str | None = None
+    calculator_quote_id: str | None = None
+    calculator_order_draft_id: str | None = None
+    status: str = "new"
+    order_date: datetime = field(default_factory=utc_now)
+    planned_due_at: datetime | None = None
+    confirmed_due_at: datetime | None = None
+    completed_at: datetime | None = None
+    cancelled_at: datetime | None = None
+    currency: str = "UAH"
+    total_amount_planned: float | None = None
+    total_amount_confirmed: float | None = None
+    payment_status: str = "not_invoiced"
+    production_status: str = "not_started"
+    workflow_status: str = "not_started"
+    source_system: str = "manual"
+    source_ref: str | None = None
+    raw_source_payload: Mapping[str, Any] = field(default_factory=dict)
+    notes: str | None = None
+    created_at: datetime = field(default_factory=utc_now)
+    updated_at: datetime = field(default_factory=utc_now)
+
+    def __post_init__(self) -> None:
+        if not self.order_id:
+            raise ValueError("order_id is required")
+
+        if not self.client_account_id:
+            raise ValueError("client_account_id is required")
+
+        if not self.currency:
+            raise ValueError("currency is required")
+
+        if not self.source_system:
+            raise ValueError("source_system is required")
+
+        ensure_in(self.status, ORDER_STATUSES, "status")
+        ensure_in(self.payment_status, PAYMENT_PROJECTION_STATUSES, "payment_status")
+        ensure_in(self.production_status, PRODUCTION_STATUSES, "production_status")
+        ensure_in(self.workflow_status, WORKFLOW_STATUSES, "workflow_status")
+        ensure_no_forbidden_payload_keys(self.raw_source_payload)
+
+        if self.total_amount_planned is not None and self.total_amount_planned < 0:
+            raise ValueError("total_amount_planned must not be negative")
+
+        if self.total_amount_confirmed is not None and self.total_amount_confirmed < 0:
+            raise ValueError("total_amount_confirmed must not be negative")
+
+        self.raw_source_payload = freeze_mapping(self.raw_source_payload)
+
+
+@dataclass(slots=True)
+class OperationalOrderLine:
+    """Product/service line in an operational order.
+
+    Display name is not canonical truth.
+    Library IDs become canonical when available.
+    Until Library is ready, raw/display names and draft refs are preserved.
+    """
+
+    order_line_id: str
+    order_id: str
+    line_no: int
+    product_or_service_display_name: str
+    quantity: float
+    unit: str
+    library_product_id: str | None = None
+    library_service_id: str | None = None
+    library_material_id: str | None = None
+    raw_product_or_service_name: str | None = None
+    unit_price_planned: float | None = None
+    line_total_planned: float | None = None
+    line_total_confirmed: float | None = None
+    calculator_line_ref: str | None = None
+    calculator_operation_ref: str | None = None
+    status: str = "draft"
+    notes: str | None = None
+    created_at: datetime = field(default_factory=utc_now)
+    updated_at: datetime = field(default_factory=utc_now)
+
+    def __post_init__(self) -> None:
+        if not self.order_line_id:
+            raise ValueError("order_line_id is required")
+
+        if not self.order_id:
+            raise ValueError("order_id is required")
+
+        if self.line_no <= 0:
+            raise ValueError("line_no must be positive")
+
+        if not self.product_or_service_display_name:
+            raise ValueError("product_or_service_display_name is required")
+
+        if self.quantity <= 0:
+            raise ValueError("quantity must be positive")
+
+        if not self.unit:
+            raise ValueError("unit is required")
+
+        ensure_in(self.status, ORDER_STATUSES, "status")
+
+        for field_name, value in (
+            ("unit_price_planned", self.unit_price_planned),
+            ("line_total_planned", self.line_total_planned),
+            ("line_total_confirmed", self.line_total_confirmed),
+        ):
+            if value is not None and value < 0:
+                raise ValueError(f"{field_name} must not be negative")
+
+
+@dataclass(slots=True)
+class CalculatorOutputPackageReference:
+    """Reference to future Calculator output package.
+
+    This does not copy Calculator formulas or pricing rules.
+    """
+
+    calculator_reference_id: str
+    calculator_output_package_id: str
+    order_id: str | None = None
+    source_system: str = "calculator_engine"
+    calculator_calculation_id: str | None = None
+    quote_draft_id: str | None = None
+    order_draft_id: str | None = None
+    schema_version: str | None = None
+    received_at: datetime | None = None
+    raw_payload_ref: str | None = None
+    validation_status: str = "not_validated"
+    notes: str | None = None
+
+    def __post_init__(self) -> None:
+        if not self.calculator_reference_id:
+            raise ValueError("calculator_reference_id is required")
+
+        if not self.calculator_output_package_id:
+            raise ValueError("calculator_output_package_id is required")
+
+        if self.source_system != "calculator_engine":
+            raise ValueError("source_system must be calculator_engine")
+
+        ensure_in(
+            self.validation_status,
+            CALCULATOR_REFERENCE_VALIDATION_STATUSES,
+            "validation_status",
+        )
+
+
+@dataclass(slots=True)
+class ProductServiceReference:
+    """Flexible reference to future ForPrint Library catalog entity."""
+
+    product_service_reference_id: str
+    display_name: str
+    order_line_id: str | None = None
+    library_entity_type: str | None = None
+    library_entity_id: str | None = None
+    raw_name: str | None = None
+    source_system: str = "manual"
+    resolution_status: str = "draft_display_only"
+    notes: str | None = None
+
+    def __post_init__(self) -> None:
+        if not self.product_service_reference_id:
+            raise ValueError("product_service_reference_id is required")
+
+        if not self.display_name:
+            raise ValueError("display_name is required")
+
+        if not self.source_system:
+            raise ValueError("source_system is required")
+
+        ensure_in(
+            self.resolution_status,
+            PRODUCT_SERVICE_RESOLUTION_STATUSES,
+            "resolution_status",
+        )
+
+        if self.resolution_status == "library_reference_confirmed" and not self.library_entity_id:
+            raise ValueError(
+                "library_entity_id is required when resolution_status is "
+                "library_reference_confirmed"
+            )

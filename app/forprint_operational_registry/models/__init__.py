@@ -28,6 +28,12 @@ from forprint_operational_registry.models.data_foundation import (
 from forprint_operational_registry.models.event import OperationalEvent
 from forprint_operational_registry.models.note import OperationalNote
 from forprint_operational_registry.models.order import OrderRecord
+from forprint_operational_registry.models.order_workflow import (
+    CalculatorOutputPackageReference,
+    OperationalOrder,
+    OperationalOrderLine,
+    ProductServiceReference,
+)
 from forprint_operational_registry.models.task import OperationalTask
 
 __all__ = [
@@ -58,4 +64,8 @@ __all__ = [
     "OperationalFactRecord",
     "RawNormalizedValue",
     "ReportDefinition",
+    "CalculatorOutputPackageReference",
+    "OperationalOrder",
+    "OperationalOrderLine",
+    "ProductServiceReference",
 ]
