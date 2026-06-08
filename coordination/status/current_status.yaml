@@ -1,14 +1,31 @@
 module_id: forprint_operational_registry
+module_name: ForPrint Operational Registry
+module_status: active
+priority: p0
 current_phase: client_account_card_foundation_v0_1
-last_completed_step: client_account_examples_lookup_terminal_preview_ready
-previous_stable_status: paused_after_v0_5_reference_and_storage_ready
-current_status: client_account_card_foundation_checkpoint_b_completed
+last_completed_step: client_account_card_foundation_ready
+last_prompt_id: owner_blueprint_prompt__client_account_card_foundation_v0_1
+last_report_id: 2026-06-05__forprint_operational_registry__report__client-account-card-foundation-v0-1
+last_commit: '2135527'
 branch: main
-latest_known_commit: e4e3ff6
-validation:
-  make_check: ok
-  latest_test_count: 138
+checks:
+  lint: ok
+  tests: ok_142_passed
+  check_report: ok
+  coordination_check: ok
   client_card_preview: ok
+boundary:
+  no_foreign_ownership: true
+  no_production_api: true
+  no_live_write: true
+  no_real_integrations: true
+  no_real_1c_sync: true
+  no_crm_dashboard: true
+  no_telegram_runtime_ui: true
+  no_calculator_integration: true
+  no_library_integration: true
+  no_warehouse_stock_truth: true
+  no_prepress_lifecycle: true
 boundaries:
   production_api_added: false
   real_integrations_added: false
@@ -19,10 +36,20 @@ boundaries:
   calculator_integration_added: false
   library_integration_added: false
   warehouse_stock_truth_added: false
-notes:
-  - ClientAccount card foundation models are added.
-  - Safe demo client card examples are added.
-  - Identity lookup helper is added.
-  - Terminal client card preview is available through make client-card-preview.
-  - Phone remains lookup key, not canonical identity.
-  - client_account_id remains canonical customer/account truth.
+current_outputs:
+- client_account_foundation_models
+- client_identity_lookup_service
+- terminal_client_card_preview
+- safe_demo_client_card_examples
+- client_account_architecture_docs
+- coordination_completion_report
+recommended_next_step:
+- Pause after ClientAccount Card Foundation v0.1 until Blueprint approves next foundation
+  step.
+- 'Recommended next candidate: Operational Analytics and Workflow Foundation v0.1.'
+updated_at: '2026-06-08T15:52:54.703820+00:00'
+validation:
+  make_check: ok
+  make_check_report: ok
+  client_card_preview: ok
+  coordination_metadata: ok
