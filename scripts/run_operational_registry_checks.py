@@ -24,9 +24,13 @@ from forprint_operational_registry.services.registry_checks import (  # noqa: E4
     validate_blocker_config,
     validate_checkpoint_a_files,
     validate_checkpoint_b_files,
+    validate_client_account_foundation_files,
+    validate_client_card_examples,
+    validate_coordination_files,
     validate_foreign_import_boundary,
     validate_handoff_fixtures,
     validate_macro_pack_files,
+    validate_makefile_standard_targets,
     validate_manifest,
     validate_module_handoff_examples,
     validate_no_forbidden_storage_tables,
@@ -302,6 +306,49 @@ def build_check_report(run_external: bool = True) -> dict[str, object]:
             name="Operational blocker config",
             expected_result="Operational blocker config is valid",
             errors=validate_blocker_config(PROJECT_ROOT),
+        )
+    )
+
+    steps.append(
+        run_internal_check(
+            name="ClientAccount foundation files",
+            expected_result="ClientAccount models/docs/lookup/preview files exist",
+            errors=validate_client_account_foundation_files(PROJECT_ROOT),
+        )
+    )
+
+    steps.append(
+        run_internal_check(
+            name="Client card examples",
+            expected_result="Safe sanitized client card examples are valid",
+            errors=validate_client_card_examples(PROJECT_ROOT),
+        )
+    )
+
+    steps.append(
+        run_command(
+            name="Client card terminal preview",
+            expected_result="Terminal client card preview renders successfully",
+            command=[
+                sys.executable,
+                "scripts/client_card_preview.py",
+            ],
+        )
+    )
+
+    steps.append(
+        run_internal_check(
+            name="Coordination files",
+            expected_result="Coordination status and report files exist",
+            errors=validate_coordination_files(PROJECT_ROOT),
+        )
+    )
+
+    steps.append(
+        run_internal_check(
+            name="Makefile standard targets",
+            expected_result="Required maintenance/coordination targets exist",
+            errors=validate_makefile_standard_targets(PROJECT_ROOT),
         )
     )
 

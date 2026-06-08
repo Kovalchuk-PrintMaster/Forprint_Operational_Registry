@@ -1,0 +1,28 @@
+module_id: forprint_operational_registry
+current_phase: client_account_card_foundation_v0_1
+last_completed_step: client_account_examples_lookup_terminal_preview_ready
+previous_stable_status: paused_after_v0_5_reference_and_storage_ready
+current_status: client_account_card_foundation_checkpoint_b_completed
+branch: main
+latest_known_commit: e4e3ff6
+validation:
+  make_check: ok
+  latest_test_count: 138
+  client_card_preview: ok
+boundaries:
+  production_api_added: false
+  real_integrations_added: false
+  production_db_migrations_added: false
+  real_1c_sync_added: false
+  crm_dashboard_added: false
+  telegram_runtime_ui_added: false
+  calculator_integration_added: false
+  library_integration_added: false
+  warehouse_stock_truth_added: false
+notes:
+  - ClientAccount card foundation models are added.
+  - Safe demo client card examples are added.
+  - Identity lookup helper is added.
+  - Terminal client card preview is available through make client-card-preview.
+  - Phone remains lookup key, not canonical identity.
+  - client_account_id remains canonical customer/account truth.

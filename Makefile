@@ -1,7 +1,9 @@
 PYTHON ?= .venv_operational_registry/bin/python
 PIP ?= .venv_operational_registry/bin/pip
 
-.PHONY: install test lint check check-report format clean client-card-preview
+.PHONY: install test lint lint-fix check check-report status-report format 
+	clean client-card-preview blueprint-pull blueprint-check blueprint-sync-directives 
+	coordination-check coordination-fix module-policy-check
 
 install:
 	python3.11 -m venv .venv_operational_registry
@@ -11,8 +13,14 @@ install:
 test:
 	$(PYTHON) -m pytest -q
 
+lint-fix:
+	$(PYTHON) -m ruff check app tests scripts --fix
+
 lint:
 	$(PYTHON) -m ruff check app tests scripts
+
+status-report:
+	$(PYTHON) scripts/export_module_status.py
 
 check: lint test
 
@@ -31,3 +39,24 @@ clean:
 
 client-card-preview:
 	$(PYTHON) scripts/client_card_preview.py
+
+blueprint-pull:
+	@echo "DEFERRED: Blueprint pull is not wired for this module yet."
+
+blueprint-check:
+	@echo "DEFERRED: Blueprint check is not wired for this module yet."
+
+blueprint-sync-directives:
+	@echo "DEFERRED: Blueprint directive sync is not wired for this module yet."
+
+coordination-check:
+	@test -f coordination/status/current_status.yaml
+	@test -f coordination/status/current_status.md
+	@test -f coordination/reports/index.yaml
+	@echo "✅ Coordination files exist."
+
+coordination-fix:
+	@echo "DEFERRED: automatic coordination fix is not implemented yet."
+
+module-policy-check:
+	$(PYTHON) scripts/run_operational_registry_checks.py

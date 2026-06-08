@@ -225,6 +225,45 @@ FORBIDDEN_STORAGE_TABLE_NAMES: tuple[str, ...] = (
     "library_contracts",
 )
 
+REQUIRED_CLIENT_ACCOUNT_FILES: tuple[str, ...] = (
+    "app/forprint_operational_registry/models/client_account.py",
+    "app/forprint_operational_registry/services/client_identity_lookup.py",
+    "scripts/client_card_preview.py",
+    "docs/architecture/client_account_card_foundation.md",
+    "docs/architecture/client_account_1c_compatibility.md",
+    "docs/architecture/client_identity_lookup_policy.md",
+    "docs/architecture/contact_method_policy.md",
+)
+
+REQUIRED_CLIENT_CARD_EXAMPLES: tuple[str, ...] = (
+    "examples/client_cards/demo_organization_client.yaml",
+    "examples/client_cards/demo_person_client.yaml",
+    "examples/client_cards/demo_ambiguous_phone_lookup.yaml",
+)
+
+REQUIRED_COORDINATION_FILES: tuple[str, ...] = (
+    "coordination/status/current_status.yaml",
+    "coordination/status/current_status.md",
+    "coordination/reports/index.yaml",
+    "coordination/reports/completion/2026-06-05__forprint_operational_registry__report__client-account-card-foundation-v0-1.md",
+)
+
+REQUIRED_MAKE_TARGETS: tuple[str, ...] = (
+    "lint",
+    "lint-fix",
+    "test",
+    "check",
+    "check-report",
+    "status-report",
+    "client-card-preview",
+    "blueprint-pull",
+    "blueprint-check",
+    "blueprint-sync-directives",
+    "coordination-check",
+    "coordination-fix",
+    "module-policy-check",
+)
+
 
 def load_yaml(path: Path) -> dict[str, Any]:
     """Load YAML file as dictionary."""
@@ -619,5 +658,68 @@ def validate_no_forbidden_storage_tables(project_root: Path) -> list[str]:
     for forbidden_table in FORBIDDEN_STORAGE_TABLE_NAMES:
         if forbidden_table in table_names:
             errors.append(f"forbidden foreign-domain storage table detected: {forbidden_table}")
+
+    return errors
+
+
+def validate_client_account_foundation_files(project_root: Path) -> list[str]:
+    """Validate ClientAccount foundation files exist."""
+
+    errors: list[str] = []
+
+    for relative_path in REQUIRED_CLIENT_ACCOUNT_FILES:
+        if not (project_root / relative_path).exists():
+            errors.append(f"required ClientAccount foundation file is missing: {relative_path}")
+
+    return errors
+
+
+def validate_client_card_examples(project_root: Path) -> list[str]:
+    """Validate safe demo client card examples."""
+
+    errors: list[str] = []
+
+    for relative_path in REQUIRED_CLIENT_CARD_EXAMPLES:
+        path = project_root / relative_path
+        if not path.exists():
+            errors.append(f"client card example is missing: {relative_path}")
+            continue
+
+        data = load_yaml(path)
+        if data.get("fixture_status") != "example":
+            errors.append(f"{relative_path}: fixture_status must be example")
+
+        if data.get("contains_real_customer_data") is not False:
+            errors.append(f"{relative_path}: contains_real_customer_data must be false")
+
+    return errors
+
+
+def validate_coordination_files(project_root: Path) -> list[str]:
+    """Validate coordination status/report files."""
+
+    errors: list[str] = []
+
+    for relative_path in REQUIRED_COORDINATION_FILES:
+        if not (project_root / relative_path).exists():
+            errors.append(f"coordination file is missing: {relative_path}")
+
+    return errors
+
+
+def validate_makefile_standard_targets(project_root: Path) -> list[str]:
+    """Validate required Makefile targets are present."""
+
+    errors: list[str] = []
+    makefile_path = project_root / "Makefile"
+
+    if not makefile_path.exists():
+        return ["Makefile is missing"]
+
+    text = makefile_path.read_text(encoding="utf-8")
+
+    for target in REQUIRED_MAKE_TARGETS:
+        if f"{target}:" not in text:
+            errors.append(f"Makefile target is missing: {target}")
 
     return errors
