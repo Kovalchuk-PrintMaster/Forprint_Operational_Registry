@@ -1,0 +1,17 @@
+fixture_status: example
+contains_real_business_data: false
+records:
+  - contractor_reference_id: contractor_ref_demo_001
+    contractor_type: contractor
+    display_name: Demo contractor display
+    client_account_id:
+    external_reference_id:
+    source_system: sanitized_demo
+    resolution_status: display_only
+  - contractor_reference_id: subcontractor_ref_demo_001
+    contractor_type: subcontractor
+    display_name: Demo subcontractor pending
+    client_account_id:
+    external_reference_id:
+    source_system: sanitized_demo
+    resolution_status: client_account_reference_pending

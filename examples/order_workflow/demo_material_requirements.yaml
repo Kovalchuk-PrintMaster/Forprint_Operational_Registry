@@ -1,0 +1,20 @@
+fixture_status: example
+contains_real_business_data: false
+records:
+  - material_requirement_id: mat_req_demo_001
+    order_id: order_demo_001
+    order_line_id: line_demo_001
+    library_material_id:
+    material_display_name: Demo material
+    raw_material_name: Raw demo material
+    quantity_planned: 12.5
+    quantity_confirmed:
+    unit: m2
+    source_type: calculator_reference
+    source_ref: calc_line_demo_001
+    requirement_status: warehouse_reference_pending
+    required_by: "2026-06-10T00:00:00+00:00"
+    warehouse_reference:
+boundary:
+  warehouse_runtime_integration: false
+  warehouse_stock_truth_owned_here: false

@@ -1,0 +1,33 @@
+fixture_status: example
+contains_real_business_data: false
+rules:
+  - alert_rule_id: alert_rule_late_stage
+    rule_name: Late workflow stage
+    rule_type: workflow_stage_late
+    target_entity_type: workflow_stage
+    severity: high
+    condition_description: Workflow stage deadline is exceeded.
+    threshold_minutes: 0
+    is_active: true
+    notification_channels: []
+  - alert_rule_id: alert_rule_payment_overdue
+    rule_name: Payment overdue
+    rule_type: payment_overdue
+    target_entity_type: payment_projection
+    severity: warning
+    condition_description: Payment projection is overdue.
+    is_active: true
+    notification_channels: []
+events:
+  - alert_event_id: alert_demo_001
+    alert_rule_id: alert_rule_late_stage
+    target_entity_type: workflow_stage
+    target_entity_id: wf_stage_demo_production
+    severity: high
+    status: open
+    message: Workflow stage is late.
+    notification_status: not_sent
+boundary:
+  real_telegram_notification: false
+  real_crm_popup: false
+  

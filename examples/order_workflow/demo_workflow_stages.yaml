@@ -1,0 +1,25 @@
+fixture_status: example
+contains_real_business_data: false
+records:
+  - workflow_stage_id: wf_stage_demo_prepress
+    order_id: order_demo_001
+    stage_code: prepress
+    stage_name: Prepress
+    stage_order: 1
+    status: completed
+    contractor_ref: contractor_ref_demo_001
+  - workflow_stage_id: wf_stage_demo_production
+    order_id: order_demo_001
+    stage_code: production
+    stage_name: Production
+    stage_order: 2
+    status: in_progress
+    subcontractor_ref: subcontractor_ref_demo_001
+    deadline_at: "2026-06-08T11:00:00+00:00"
+  - workflow_stage_id: wf_stage_demo_manual
+    order_id: order_demo_001
+    stage_code: manual_review
+    stage_name: Manual Review
+    stage_order: 3
+    status: manual_review_required
+    manual_override_reason: Synthetic non-standard requirement.

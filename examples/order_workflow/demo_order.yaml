@@ -1,0 +1,17 @@
+fixture_status: example
+contains_real_business_data: false
+record:
+  order_id: order_demo_001
+  client_account_id: acc_demo_org_001
+  client_group_id: grp_demo_001
+  calculator_output_package_id: calc_package_demo_001
+  calculator_calculation_id: calc_demo_001
+  calculator_quote_id: quote_demo_001
+  status: needs_review
+  currency: UAH
+  total_amount_planned: 2500.0
+  payment_status: partially_paid
+  production_status: not_started
+  workflow_status: in_progress
+  source_system: sanitized_demo
+  source_ref: demo_request_001

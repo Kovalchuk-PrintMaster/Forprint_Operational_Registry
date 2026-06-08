@@ -30,6 +30,7 @@ def test_current_status_keeps_client_account_checkpoint_history() -> None:
     assert data["current_phase"] in {
         "client_account_card_foundation_v0_1",
         "data_foundation_strategy_v0_1",
+        "order_workflow_projection_foundation_v0_1",
     }
 
     notes = "\n".join(data.get("notes", []))

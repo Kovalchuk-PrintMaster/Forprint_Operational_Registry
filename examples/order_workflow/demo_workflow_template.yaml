@@ -1,0 +1,27 @@
+fixture_status: example
+contains_real_business_data: false
+record:
+  workflow_template_id: wf_template_demo_001
+  template_name: Demo order workflow
+  template_type: order
+  status: draft
+  version: "0.1"
+  stages:
+    - stage_code: prepress
+      stage_name: Prepress
+      default_order: 1
+      default_duration_minutes: 120
+      responsible_role: prepress_operator
+      is_required: true
+    - stage_code: production
+      stage_name: Production
+      default_order: 2
+      default_duration_minutes: 240
+      responsible_role: production_operator
+      is_required: true
+    - stage_code: quality_check
+      stage_name: Quality Check
+      default_order: 3
+      default_duration_minutes: 60
+      responsible_role: operator
+      is_required: true

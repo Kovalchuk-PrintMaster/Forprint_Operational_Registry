@@ -1,0 +1,13 @@
+fixture_status: example
+contains_real_business_data: false
+records:
+  - order_line_id: line_demo_001
+    order_id: order_demo_001
+    line_no: 1
+    product_or_service_display_name: Demo product/service line
+    raw_product_or_service_name: Raw demo line name
+    quantity: 10
+    unit: pcs
+    line_total_planned: 2500.0
+    calculator_line_ref: calc_line_demo_001
+    status: draft

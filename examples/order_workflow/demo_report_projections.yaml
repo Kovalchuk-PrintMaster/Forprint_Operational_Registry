@@ -1,0 +1,33 @@
+fixture_status: example
+contains_real_business_data: false
+records:
+  - projection_id: projection_client_order_history_demo
+    projection_type: client_order_history
+    dimensions:
+      - client_account_id
+      - order_id
+      - status
+    metrics:
+      - total_amount_planned
+    rows_count: 1
+  - projection_id: projection_payment_debt_summary_demo
+    projection_type: payment_debt_summary
+    dimensions:
+      - client_account_id
+    metrics:
+      - unpaid_amount
+    rows_count: 1
+  - projection_id: projection_workflow_status_summary_demo
+    projection_type: workflow_stage_status
+    dimensions:
+      - status
+    metrics:
+      - stage_count
+    rows_count: 3
+  - projection_id: projection_alert_summary_demo
+    projection_type: alert_summary
+    dimensions:
+      - status
+    metrics:
+      - alert_count
+    rows_count: 1

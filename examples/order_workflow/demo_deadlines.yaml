@@ -1,0 +1,17 @@
+fixture_status: example
+contains_real_business_data: false
+records:
+  - deadline_control_id: deadline_order_demo_001
+    target_entity_type: order
+    target_entity_id: order_demo_001
+    deadline_type: order_due
+    deadline_at: "2026-06-12T18:00:00+00:00"
+    warning_before_minutes: 1440
+    status: active
+  - deadline_control_id: deadline_payment_demo_001
+    target_entity_type: payment_projection
+    target_entity_id: pay_proj_demo_001
+    deadline_type: payment_due
+    deadline_at: "2026-06-09T00:00:00+00:00"
+    warning_before_minutes: 720
+    status: warning

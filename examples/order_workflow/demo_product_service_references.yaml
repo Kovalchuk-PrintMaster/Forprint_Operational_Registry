@@ -1,0 +1,14 @@
+fixture_status: example
+contains_real_business_data: false
+records:
+  - product_service_reference_id: ps_ref_demo_001
+    order_line_id: line_demo_001
+    library_entity_type:
+    library_entity_id:
+    display_name: Demo product/service display
+    raw_name: Raw product/service text
+    source_system: sanitized_demo
+    resolution_status: library_reference_pending
+boundary:
+  library_runtime_integration: false
+  canonical_library_semantics_owned_here: false

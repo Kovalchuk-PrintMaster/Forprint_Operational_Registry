@@ -1,0 +1,21 @@
+fixture_status: example
+contains_real_business_data: false
+record:
+  payment_projection_id: pay_proj_demo_001
+  order_id: order_demo_001
+  client_account_id: acc_demo_org_001
+  accounting_invoice_ref: invoice_ref_demo_001
+  accounting_payment_ref: payment_ref_demo_001
+  one_c_document_ref: one_c_doc_ref_demo_001
+  total_amount: 2500.0
+  paid_amount: 1000.0
+  unpaid_amount: 1500.0
+  currency: UAH
+  payment_status: partially_paid
+  due_date: "2026-06-09T00:00:00+00:00"
+  source_system: sanitized_demo
+  sync_confidence: demo
+boundary:
+  accounting_runtime_integration: false
+  accounting_truth_owned_here: false
+  one_c_write_added: false

@@ -291,6 +291,48 @@ REQUIRED_DATA_FOUNDATION_EXAMPLES: tuple[str, ...] = (
     "examples/data_foundation/data_projection.example.yaml",
 )
 
+REQUIRED_ORDER_WORKFLOW_DOCS: tuple[str, ...] = (
+    "docs/architecture/order_workflow_foundation.md",
+    "docs/architecture/calculator_output_package_reference_policy.md",
+    "docs/architecture/product_service_reference_policy.md",
+    "docs/architecture/material_requirement_policy.md",
+    "docs/architecture/payment_projection_policy.md",
+    "docs/architecture/workflow_stage_policy.md",
+    "docs/architecture/contractor_subcontractor_tracking_policy.md",
+    "docs/architecture/deadline_alert_policy.md",
+    "docs/architecture/operational_report_policy.md",
+)
+
+REQUIRED_ORDER_WORKFLOW_FILES: tuple[str, ...] = (
+    "app/forprint_operational_registry/models/order_workflow.py",
+    "app/forprint_operational_registry/services/order_workflow_demo.py",
+    "scripts/order_workflow_preview.py",
+)
+
+REQUIRED_ORDER_WORKFLOW_EXAMPLES: tuple[str, ...] = (
+    "examples/order_workflow/demo_order.yaml",
+    "examples/order_workflow/demo_order_lines.yaml",
+    "examples/order_workflow/demo_calculator_reference.yaml",
+    "examples/order_workflow/demo_product_service_references.yaml",
+    "examples/order_workflow/demo_material_requirements.yaml",
+    "examples/order_workflow/demo_payment_projection.yaml",
+    "examples/order_workflow/demo_workflow_template.yaml",
+    "examples/order_workflow/demo_workflow_stages.yaml",
+    "examples/order_workflow/demo_contractor_references.yaml",
+    "examples/order_workflow/demo_deadlines.yaml",
+    "examples/order_workflow/demo_alerts.yaml",
+    "examples/order_workflow/demo_report_projections.yaml",
+)
+
+REQUIRED_ORDER_WORKFLOW_PREVIEW_TARGETS: tuple[str, ...] = (
+    "order-preview",
+    "workflow-preview",
+    "payment-preview",
+    "material-requirement-preview",
+    "alert-preview",
+    "operational-report-preview",
+)
+
 
 def load_yaml(path: Path) -> dict[str, Any]:
     """Load YAML file as dictionary."""
@@ -794,5 +836,68 @@ def validate_data_foundation_examples(project_root: Path) -> list[str]:
 
         if data.get("contains_real_business_data") is not False:
             errors.append(f"{relative_path}: contains_real_business_data must be false")
+
+    return errors
+
+
+def validate_order_workflow_docs(project_root: Path) -> list[str]:
+    """Validate order/workflow architecture docs."""
+
+    errors: list[str] = []
+
+    for relative_path in REQUIRED_ORDER_WORKFLOW_DOCS:
+        if not (project_root / relative_path).exists():
+            errors.append(f"order workflow doc is missing: {relative_path}")
+
+    return errors
+
+
+def validate_order_workflow_files(project_root: Path) -> list[str]:
+    """Validate order/workflow model/service/preview files."""
+
+    errors: list[str] = []
+
+    for relative_path in REQUIRED_ORDER_WORKFLOW_FILES:
+        if not (project_root / relative_path).exists():
+            errors.append(f"order workflow file is missing: {relative_path}")
+
+    return errors
+
+
+def validate_order_workflow_examples(project_root: Path) -> list[str]:
+    """Validate safe order/workflow examples."""
+
+    errors: list[str] = []
+
+    for relative_path in REQUIRED_ORDER_WORKFLOW_EXAMPLES:
+        path = project_root / relative_path
+        if not path.exists():
+            errors.append(f"order workflow example is missing: {relative_path}")
+            continue
+
+        data = load_yaml(path)
+
+        if data.get("fixture_status") != "example":
+            errors.append(f"{relative_path}: fixture_status must be example")
+
+        if data.get("contains_real_business_data") is not False:
+            errors.append(f"{relative_path}: contains_real_business_data must be false")
+
+    return errors
+
+
+def validate_order_workflow_preview_targets(project_root: Path) -> list[str]:
+    """Validate order/workflow Makefile preview targets."""
+
+    makefile_path = project_root / "Makefile"
+    if not makefile_path.exists():
+        return ["Makefile is missing"]
+
+    text = makefile_path.read_text(encoding="utf-8")
+    errors: list[str] = []
+
+    for target in REQUIRED_ORDER_WORKFLOW_PREVIEW_TARGETS:
+        if f"{target}:" not in text:
+            errors.append(f"Makefile target is missing: {target}")
 
     return errors

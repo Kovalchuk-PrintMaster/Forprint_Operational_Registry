@@ -93,3 +93,50 @@ No Calculator runtime integration.
 No Warehouse stock truth.
 
 ---
+
+## Order / Workflow / Projection Foundation v0.1
+
+Operational Registry now has flexible order/workflow/projection foundation models.
+
+Added concepts:
+
+```text
+OperationalOrder
+OperationalOrderLine
+CalculatorOutputPackageReference
+ProductServiceReference
+MaterialRequirement
+PaymentProjection
+WorkflowTemplate
+WorkflowStage
+ContractorReference
+DeadlineControlRecord
+AlertRule
+AlertEvent
+OperationalReportService
+
+Added terminal previews:
+
+make order-preview
+make workflow-preview
+make payment-preview
+make material-requirement-preview
+make alert-preview
+make operational-report-preview
+
+Boundary:
+
+No production API.
+No web UI.
+No popup UI.
+No real Telegram notification.
+No real Calculator integration.
+No real Library integration.
+No real Accounting Registry integration.
+No real Warehouse integration.
+No real 1C sync/write.
+No real stock reservation.
+No final product/material catalog.
+
+---
+

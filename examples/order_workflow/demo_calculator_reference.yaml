@@ -1,0 +1,16 @@
+fixture_status: example
+contains_real_business_data: false
+record:
+  calculator_reference_id: calc_ref_demo_001
+  order_id: order_demo_001
+  source_system: calculator_engine
+  calculator_output_package_id: calc_package_demo_001
+  calculator_calculation_id: calc_demo_001
+  quote_draft_id: quote_draft_demo_001
+  order_draft_id: order_draft_demo_001
+  schema_version: "0.1"
+  raw_payload_ref: storage_ref_only
+  validation_status: reference_received
+boundary:
+  calculator_runtime_integration: false
+  calculator_formula_owned_here: false

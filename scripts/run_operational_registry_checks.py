@@ -38,6 +38,10 @@ from forprint_operational_registry.services.registry_checks import (  # noqa: E4
     validate_module_handoff_examples,
     validate_no_forbidden_storage_tables,
     validate_no_production_api,
+    validate_order_workflow_docs,
+    validate_order_workflow_examples,
+    validate_order_workflow_files,
+    validate_order_workflow_preview_targets,
     validate_placeholder_contracts,
     validate_projection_fixtures,
     validate_query_result_examples,
@@ -156,239 +160,319 @@ def build_check_report(run_external: bool = True) -> dict[str, object]:
             )
         )
 
-    steps.append(
-        run_internal_check(
-            name="Module manifest boundary",
-            expected_result="Manifest відповідає ролі operational truth registry",
-            errors=validate_manifest(PROJECT_ROOT),
+        steps.append(
+            run_internal_check(
+                name="Module manifest boundary",
+                expected_result="Manifest відповідає ролі operational truth registry",
+                errors=validate_manifest(PROJECT_ROOT),
+            )
         )
-    )
 
-    steps.append(
-        run_internal_check(
-            name="Required architecture docs",
-            expected_result="Усі boundary-документи існують",
-            errors=validate_required_docs(PROJECT_ROOT),
+        steps.append(
+            run_internal_check(
+                name="Required architecture docs",
+                expected_result="Усі boundary-документи існують",
+                errors=validate_required_docs(PROJECT_ROOT),
+            )
         )
-    )
 
-    steps.append(
-        run_internal_check(
-            name="Status config",
-            expected_result="Статуси відповідають Blueprint v0.1",
-            errors=validate_status_config(PROJECT_ROOT),
+        steps.append(
+            run_internal_check(
+                name="Status config",
+                expected_result="Статуси відповідають Blueprint v0.1",
+                errors=validate_status_config(PROJECT_ROOT),
+            )
         )
-    )
 
-    steps.append(
-        run_internal_check(
-            name="Command/query service boundary",
-            expected_result="DTO/repository/service файли v0.2 існують",
-            errors=validate_v02_boundary_files(PROJECT_ROOT),
+        steps.append(
+            run_internal_check(
+                name="Command/query service boundary",
+                expected_result="DTO/repository/service файли v0.2 існують",
+                errors=validate_v02_boundary_files(PROJECT_ROOT),
+            )
         )
-    )
 
-    steps.append(
-        run_internal_check(
-            name="No production API",
-            expected_result="Production API не додано у v0.2",
-            errors=validate_no_production_api(PROJECT_ROOT),
+        steps.append(
+            run_internal_check(
+                name="No production API",
+                expected_result="Production API не додано у v0.2",
+                errors=validate_no_production_api(PROJECT_ROOT),
+            )
         )
-    )
 
-    steps.append(
-        run_internal_check(
-            name="Checkpoint A files",
-            expected_result="Envelope/reference/placeholder contract files exist",
-            errors=validate_checkpoint_a_files(PROJECT_ROOT),
+        steps.append(
+            run_internal_check(
+                name="Checkpoint A files",
+                expected_result="Envelope/reference/placeholder contract files exist",
+                errors=validate_checkpoint_a_files(PROJECT_ROOT),
+            )
         )
-    )
 
-    steps.append(
-        run_internal_check(
-            name="Placeholder contracts",
-            expected_result="Placeholder contracts are non-canonical local fixtures",
-            errors=validate_placeholder_contracts(PROJECT_ROOT),
+        steps.append(
+            run_internal_check(
+                name="Placeholder contracts",
+                expected_result="Placeholder contracts are non-canonical local fixtures",
+                errors=validate_placeholder_contracts(PROJECT_ROOT),
+            )
         )
-    )
 
-    steps.append(
-        run_internal_check(
-            name="Foreign import boundary",
-            expected_result="No real foreign runtime imports or integration adapters",
-            errors=validate_foreign_import_boundary(PROJECT_ROOT),
+        steps.append(
+            run_internal_check(
+                name="Foreign import boundary",
+                expected_result="No real foreign runtime imports or integration adapters",
+                errors=validate_foreign_import_boundary(PROJECT_ROOT),
+            )
         )
-    )
 
-    steps.append(
-        run_internal_check(
-            name="Checkpoint B files",
-            expected_result="Lifecycle/blocker files exist",
-            errors=validate_checkpoint_b_files(PROJECT_ROOT),
+        steps.append(
+            run_internal_check(
+                name="Checkpoint B files",
+                expected_result="Lifecycle/blocker files exist",
+                errors=validate_checkpoint_b_files(PROJECT_ROOT),
+            )
         )
-    )
 
-    steps.append(
-        run_internal_check(
-            name="Macro pack files",
-            expected_result="Projection/readiness/status export files exist",
-            errors=validate_macro_pack_files(PROJECT_ROOT),
+        steps.append(
+            run_internal_check(
+                name="Macro pack files",
+                expected_result="Projection/readiness/status export files exist",
+                errors=validate_macro_pack_files(PROJECT_ROOT),
+            )
         )
-    )
 
-    steps.append(
-        run_internal_check(
-            name="Handoff fixtures",
-            expected_result="Offline handoff fixtures are valid examples",
-            errors=validate_handoff_fixtures(PROJECT_ROOT),
+        steps.append(
+            run_internal_check(
+                name="Handoff fixtures",
+                expected_result="Offline handoff fixtures are valid examples",
+                errors=validate_handoff_fixtures(PROJECT_ROOT),
+            )
         )
-    )
 
-    steps.append(
-        run_internal_check(
-            name="Projection fixtures",
-            expected_result="Projection example fixtures are valid",
-            errors=validate_projection_fixtures(PROJECT_ROOT),
+        steps.append(
+            run_internal_check(
+                name="Projection fixtures",
+                expected_result="Projection example fixtures are valid",
+                errors=validate_projection_fixtures(PROJECT_ROOT),
+            )
         )
-    )
 
-    steps.append(
-        run_internal_check(
-            name="v0.4 integration surface files",
-            expected_result="Public surface/result/facade docs and files exist",
-            errors=validate_v04_files(PROJECT_ROOT),
+        steps.append(
+            run_internal_check(
+                name="v0.4 integration surface files",
+                expected_result="Public surface/result/facade docs and files exist",
+                errors=validate_v04_files(PROJECT_ROOT),
+            )
         )
-    )
 
-    steps.append(
-        run_internal_check(
-            name="Module handoff examples",
-            expected_result="Module handoff examples are valid offline fixtures",
-            errors=validate_module_handoff_examples(PROJECT_ROOT),
+        steps.append(
+            run_internal_check(
+                name="Module handoff examples",
+                expected_result="Module handoff examples are valid offline fixtures",
+                errors=validate_module_handoff_examples(PROJECT_ROOT),
+            )
         )
-    )
 
-    steps.append(
-        run_internal_check(
-            name="Query result examples",
-            expected_result="Query/projection examples are valid and boundary-safe",
-            errors=validate_query_result_examples(PROJECT_ROOT),
+        steps.append(
+            run_internal_check(
+                name="Query result examples",
+                expected_result="Query/projection examples are valid and boundary-safe",
+                errors=validate_query_result_examples(PROJECT_ROOT),
+            )
         )
-    )
 
-    if run_external:
+        if run_external:
+            steps.append(
+                run_command(
+                    name="Module status export",
+                    expected_result="Module status export runs successfully",
+                    command=[
+                        sys.executable,
+                        "scripts/export_module_status.py",
+                    ],
+                )
+            )
+
+        steps.append(
+            run_internal_check(
+                name="v0.5 storage files",
+                expected_result="SQLite storage foundation files exist",
+                errors=validate_v05_storage_files(PROJECT_ROOT),
+            )
+        )
+
+        steps.append(
+            run_internal_check(
+                name="No forbidden storage tables",
+                expected_result="No foreign-domain owned storage tables introduced",
+                errors=validate_no_forbidden_storage_tables(PROJECT_ROOT),
+            )
+        )
+
+        steps.append(
+            run_internal_check(
+                name="Operational blocker config",
+                expected_result="Operational blocker config is valid",
+                errors=validate_blocker_config(PROJECT_ROOT),
+            )
+        )
+
+        steps.append(
+            run_internal_check(
+                name="ClientAccount foundation files",
+                expected_result="ClientAccount models/docs/lookup/preview files exist",
+                errors=validate_client_account_foundation_files(PROJECT_ROOT),
+            )
+        )
+
+        steps.append(
+            run_internal_check(
+                name="Client card examples",
+                expected_result="Safe sanitized client card examples are valid",
+                errors=validate_client_card_examples(PROJECT_ROOT),
+            )
+        )
+
         steps.append(
             run_command(
-                name="Module status export",
-                expected_result="Module status export runs successfully",
+                name="Client card terminal preview",
+                expected_result="Terminal client card preview renders successfully",
                 command=[
                     sys.executable,
-                    "scripts/export_module_status.py",
+                    "scripts/client_card_preview.py",
                 ],
             )
         )
 
-    steps.append(
-        run_internal_check(
-            name="v0.5 storage files",
-            expected_result="SQLite storage foundation files exist",
-            errors=validate_v05_storage_files(PROJECT_ROOT),
+        steps.append(
+            run_internal_check(
+                name="Data foundation docs",
+                expected_result="Data foundation architecture docs exist",
+                errors=validate_data_foundation_docs(PROJECT_ROOT),
+            )
         )
-    )
 
-    steps.append(
-        run_internal_check(
-            name="No forbidden storage tables",
-            expected_result="No foreign-domain owned storage tables introduced",
-            errors=validate_no_forbidden_storage_tables(PROJECT_ROOT),
+        steps.append(
+            run_internal_check(
+                name="Data foundation concepts",
+                expected_result="Base model concepts and preview files exist",
+                errors=validate_data_foundation_files(PROJECT_ROOT),
+            )
         )
-    )
 
-    steps.append(
-        run_internal_check(
-            name="Operational blocker config",
-            expected_result="Operational blocker config is valid",
-            errors=validate_blocker_config(PROJECT_ROOT),
+        steps.append(
+            run_internal_check(
+                name="Data foundation examples",
+                expected_result="Safe data foundation example fixtures are valid",
+                errors=validate_data_foundation_examples(PROJECT_ROOT),
+            )
         )
-    )
 
-    steps.append(
-        run_internal_check(
-            name="ClientAccount foundation files",
-            expected_result="ClientAccount models/docs/lookup/preview files exist",
-            errors=validate_client_account_foundation_files(PROJECT_ROOT),
+        steps.append(
+            run_command(
+                name="Data foundation preview",
+                expected_result="Terminal data foundation preview renders successfully",
+                command=[
+                    sys.executable,
+                    "scripts/data_foundation_preview.py",
+                ],
+            )
         )
-    )
 
-    steps.append(
-        run_internal_check(
-            name="Client card examples",
-            expected_result="Safe sanitized client card examples are valid",
-            errors=validate_client_card_examples(PROJECT_ROOT),
+        steps.append(
+            run_internal_check(
+                name="Order workflow docs",
+                expected_result="Order/workflow architecture docs exist",
+                errors=validate_order_workflow_docs(PROJECT_ROOT),
+            )
         )
-    )
 
-    steps.append(
-        run_command(
-            name="Client card terminal preview",
-            expected_result="Terminal client card preview renders successfully",
-            command=[
-                sys.executable,
-                "scripts/client_card_preview.py",
-            ],
+        steps.append(
+            run_internal_check(
+                name="Order workflow models/services/previews",
+                expected_result="Order/workflow model, service and preview files exist",
+                errors=validate_order_workflow_files(PROJECT_ROOT),
+            )
         )
-    )
 
-    steps.append(
-        run_internal_check(
-            name="Data foundation docs",
-            expected_result="Data foundation architecture docs exist",
-            errors=validate_data_foundation_docs(PROJECT_ROOT),
+        steps.append(
+            run_internal_check(
+                name="Order workflow examples",
+                expected_result="Safe order/workflow example fixtures are valid",
+                errors=validate_order_workflow_examples(PROJECT_ROOT),
+            )
         )
-    )
 
-    steps.append(
-        run_internal_check(
-            name="Data foundation concepts",
-            expected_result="Base model concepts and preview files exist",
-            errors=validate_data_foundation_files(PROJECT_ROOT),
+        steps.append(
+            run_command(
+                name="Order preview",
+                expected_result="Order preview renders successfully",
+                command=[sys.executable, "scripts/order_workflow_preview.py", "order"],
+            )
         )
-    )
 
-    steps.append(
-        run_internal_check(
-            name="Data foundation examples",
-            expected_result="Safe data foundation example fixtures are valid",
-            errors=validate_data_foundation_examples(PROJECT_ROOT),
+        steps.append(
+            run_command(
+                name="Workflow preview",
+                expected_result="Workflow preview renders successfully",
+                command=[sys.executable, "scripts/order_workflow_preview.py", "workflow"],
+            )
         )
-    )
 
-    steps.append(
-        run_command(
-            name="Data foundation preview",
-            expected_result="Terminal data foundation preview renders successfully",
-            command=[
-                sys.executable,
-                "scripts/data_foundation_preview.py",
-            ],
+        steps.append(
+            run_command(
+                name="Payment preview",
+                expected_result="Payment preview renders successfully",
+                command=[sys.executable, "scripts/order_workflow_preview.py", "payment"],
+            )
         )
-    )
 
-    steps.append(
-        run_internal_check(
-            name="Coordination files",
-            expected_result="Coordination status and report files exist",
-            errors=validate_coordination_files(PROJECT_ROOT),
+        steps.append(
+            run_command(
+                name="Material requirement preview",
+                expected_result="Material requirement preview renders successfully",
+                command=[sys.executable, "scripts/order_workflow_preview.py", "material"],
+            )
         )
-    )
 
-    steps.append(
-        run_internal_check(
-            name="Makefile standard targets",
-            expected_result="Required maintenance/coordination targets exist",
-            errors=validate_makefile_standard_targets(PROJECT_ROOT),
+        steps.append(
+            run_command(
+                name="Alert preview",
+                expected_result="Alert preview renders successfully",
+                command=[sys.executable, "scripts/order_workflow_preview.py", "alert"],
+            )
         )
-    )
+
+        steps.append(
+            run_command(
+                name="Operational report preview",
+                expected_result="Operational report preview renders successfully",
+                command=[sys.executable, "scripts/order_workflow_preview.py", "report"],
+            )
+        )
+
+        steps.append(
+            run_internal_check(
+                name="Order workflow preview targets",
+                expected_result="Required order/workflow Makefile preview targets exist",
+                errors=validate_order_workflow_preview_targets(PROJECT_ROOT),
+            )
+        )
+
+        steps.append(
+            run_internal_check(
+                name="Coordination files",
+                expected_result="Coordination status and report files exist",
+                errors=validate_coordination_files(PROJECT_ROOT),
+            )
+        )
+
+        steps.append(
+            run_internal_check(
+                name="Makefile standard targets",
+                expected_result="Required maintenance/coordination targets exist",
+                errors=validate_makefile_standard_targets(PROJECT_ROOT),
+            )
+        )
 
     return {
         "module_id": "forprint_operational_registry",
