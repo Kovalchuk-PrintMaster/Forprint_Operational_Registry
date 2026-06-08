@@ -4,7 +4,8 @@ PIP ?= .venv_operational_registry/bin/pip
 .PHONY: install test lint lint-fix check check-report status-report format 
 	clean client-card-preview blueprint-pull blueprint-check blueprint-sync-directives 
 	coordination-check coordination-fix module-policy-check
-	data-foundation-preview
+	data-foundation-preview order-preview workflow-preview payment-preview 
+	material-requirement-preview alert-preview operational-report-preview
 
 install:
 	python3.11 -m venv .venv_operational_registry
@@ -66,3 +67,21 @@ module-policy-check:
 
 data-foundation-preview:
 	$(PYTHON) scripts/data_foundation_preview.py
+
+order-preview:
+	$(PYTHON) scripts/order_workflow_preview.py order
+
+workflow-preview:
+	$(PYTHON) scripts/order_workflow_preview.py workflow
+
+payment-preview:
+	$(PYTHON) scripts/order_workflow_preview.py payment
+
+material-requirement-preview:
+	$(PYTHON) scripts/order_workflow_preview.py material
+
+alert-preview:
+	$(PYTHON) scripts/order_workflow_preview.py alert
+
+operational-report-preview:
+	$(PYTHON) scripts/order_workflow_preview.py report

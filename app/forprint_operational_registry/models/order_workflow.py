@@ -697,3 +697,122 @@ class DeadlineControlRecord:
 
         if self.warning_before_minutes is not None and self.warning_before_minutes < 0:
             raise ValueError("warning_before_minutes must not be negative")
+
+
+ALERT_RULE_TYPES: tuple[str, ...] = (
+    "workflow_stage_late",
+    "order_deadline_near",
+    "payment_overdue",
+    "material_requirement_unresolved",
+    "manual_review_stale",
+    "contractor_stage_blocked",
+    "unknown",
+)
+
+ALERT_SEVERITIES: tuple[str, ...] = (
+    "info",
+    "warning",
+    "high",
+    "critical",
+    "unknown",
+)
+
+ALERT_EVENT_STATUSES: tuple[str, ...] = (
+    "open",
+    "acknowledged",
+    "resolved",
+    "ignored",
+    "failed_to_notify",
+)
+
+ALERT_NOTIFICATION_STATUSES: tuple[str, ...] = (
+    "not_sent",
+    "queued_future",
+    "sent_reference_only",
+    "failed",
+    "not_required",
+)
+
+
+@dataclass(slots=True)
+class AlertRule:
+    """Operational alert rule definition.
+
+    No real Telegram sending.
+    No real CRM popup.
+    """
+
+    alert_rule_id: str
+    rule_name: str
+    rule_type: str
+    target_entity_type: str
+    severity: str
+    condition_description: str
+    threshold_minutes: int | None = None
+    is_active: bool = True
+    notification_channels: tuple[str, ...] = ()
+    created_at: datetime = field(default_factory=utc_now)
+    updated_at: datetime = field(default_factory=utc_now)
+
+    def __post_init__(self) -> None:
+        if not self.alert_rule_id:
+            raise ValueError("alert_rule_id is required")
+
+        if not self.rule_name:
+            raise ValueError("rule_name is required")
+
+        if not self.target_entity_type:
+            raise ValueError("target_entity_type is required")
+
+        if not self.condition_description:
+            raise ValueError("condition_description is required")
+
+        ensure_in(self.rule_type, ALERT_RULE_TYPES, "rule_type")
+        ensure_in(self.severity, ALERT_SEVERITIES, "severity")
+
+        if self.threshold_minutes is not None and self.threshold_minutes < 0:
+            raise ValueError("threshold_minutes must not be negative")
+
+        self.notification_channels = tuple(self.notification_channels)
+
+
+@dataclass(slots=True)
+class AlertEvent:
+    """Operational alert event record.
+
+    Notification status is record-only; no runtime sending is performed.
+    """
+
+    alert_event_id: str
+    target_entity_type: str
+    target_entity_id: str
+    severity: str
+    status: str
+    message: str
+    alert_rule_id: str | None = None
+    created_at: datetime = field(default_factory=utc_now)
+    acknowledged_at: datetime | None = None
+    resolved_at: datetime | None = None
+    notification_status: str = "not_sent"
+    notification_target_ref: str | None = None
+
+    def __post_init__(self) -> None:
+        if not self.alert_event_id:
+            raise ValueError("alert_event_id is required")
+
+        if not self.target_entity_type:
+            raise ValueError("target_entity_type is required")
+
+        if not self.target_entity_id:
+            raise ValueError("target_entity_id is required")
+
+        if not self.message:
+            raise ValueError("message is required")
+
+        ensure_in(self.severity, ALERT_SEVERITIES, "severity")
+        ensure_in(self.status, ALERT_EVENT_STATUSES, "status")
+        ensure_in(
+            self.notification_status,
+            ALERT_NOTIFICATION_STATUSES,
+            "notification_status",
+        )
