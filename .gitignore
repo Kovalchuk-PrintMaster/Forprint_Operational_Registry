@@ -9,3 +9,12 @@ reports/
 .env
 .env.*
 .DS_Store
+
+# ForPrint coordination metadata must be versioned
+!coordination/
+!coordination/prompts/
+!coordination/prompts/**
+!coordination/reports/
+!coordination/reports/**
+!coordination/status/
+!coordination/status/**
