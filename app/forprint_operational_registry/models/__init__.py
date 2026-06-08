@@ -30,9 +30,16 @@ from forprint_operational_registry.models.note import OperationalNote
 from forprint_operational_registry.models.order import OrderRecord
 from forprint_operational_registry.models.order_workflow import (
     CalculatorOutputPackageReference,
+    ContractorReference,
+    DeadlineControlRecord,
+    MaterialRequirement,
     OperationalOrder,
     OperationalOrderLine,
+    PaymentProjection,
     ProductServiceReference,
+    WorkflowStage,
+    WorkflowStageTemplate,
+    WorkflowTemplate,
 )
 from forprint_operational_registry.models.task import OperationalTask
 
@@ -68,4 +75,11 @@ __all__ = [
     "OperationalOrder",
     "OperationalOrderLine",
     "ProductServiceReference",
+    "ContractorReference",
+    "DeadlineControlRecord",
+    "MaterialRequirement",
+    "PaymentProjection",
+    "WorkflowStage",
+    "WorkflowStageTemplate",
+    "WorkflowTemplate",
 ]

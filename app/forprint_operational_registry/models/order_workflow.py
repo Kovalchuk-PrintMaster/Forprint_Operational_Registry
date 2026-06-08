@@ -326,3 +326,374 @@ class ProductServiceReference:
                 "library_entity_id is required when resolution_status is "
                 "library_reference_confirmed"
             )
+
+
+MATERIAL_REQUIREMENT_STATUSES: tuple[str, ...] = (
+    "planned",
+    "library_reference_pending",
+    "warehouse_reference_pending",
+    "reserved_reference_pending",
+    "confirmed",
+    "fulfilled",
+    "cancelled",
+    "unknown",
+)
+
+PAYMENT_VISIBILITY_STATUSES: tuple[str, ...] = (
+    "not_invoiced",
+    "invoice_reference_pending",
+    "unpaid",
+    "partially_paid",
+    "paid_reference_confirmed",
+    "overdue",
+    "cancelled",
+    "unknown",
+)
+
+CONTRACTOR_RESOLUTION_STATUSES: tuple[str, ...] = (
+    "display_only",
+    "client_account_reference_pending",
+    "client_account_reference_confirmed",
+    "external_reference_pending",
+    "manual_review_required",
+)
+
+DEADLINE_TYPES: tuple[str, ...] = (
+    "order_due",
+    "stage_due",
+    "payment_due",
+    "material_required_by",
+    "manual_review_due",
+)
+
+DEADLINE_STATUSES: tuple[str, ...] = (
+    "active",
+    "warning",
+    "late",
+    "completed",
+    "cancelled",
+    "unknown",
+)
+
+
+@dataclass(slots=True)
+class MaterialRequirement:
+    """Planned material need.
+
+    This is not warehouse stock truth.
+    Operational Registry stores planning/projection only.
+    """
+
+    material_requirement_id: str
+    order_id: str
+    material_display_name: str
+    quantity_planned: float
+    unit: str
+    order_line_id: str | None = None
+    library_material_id: str | None = None
+    raw_material_name: str | None = None
+    quantity_confirmed: float | None = None
+    source_type: str = "manual"
+    source_ref: str | None = None
+    requirement_status: str = "planned"
+    required_by: datetime | None = None
+    warehouse_reference: str | None = None
+    notes: str | None = None
+    created_at: datetime = field(default_factory=utc_now)
+    updated_at: datetime = field(default_factory=utc_now)
+
+    def __post_init__(self) -> None:
+        if not self.material_requirement_id:
+            raise ValueError("material_requirement_id is required")
+
+        if not self.order_id:
+            raise ValueError("order_id is required")
+
+        if not self.material_display_name:
+            raise ValueError("material_display_name is required")
+
+        if self.quantity_planned <= 0:
+            raise ValueError("quantity_planned must be positive")
+
+        if self.quantity_confirmed is not None and self.quantity_confirmed < 0:
+            raise ValueError("quantity_confirmed must not be negative")
+
+        if not self.unit:
+            raise ValueError("unit is required")
+
+        if not self.source_type:
+            raise ValueError("source_type is required")
+
+        ensure_in(
+            self.requirement_status,
+            MATERIAL_REQUIREMENT_STATUSES,
+            "requirement_status",
+        )
+
+    @property
+    def is_unresolved(self) -> bool:
+        """Return whether material requirement is still unresolved."""
+
+        return self.requirement_status in {
+            "planned",
+            "library_reference_pending",
+            "warehouse_reference_pending",
+            "reserved_reference_pending",
+            "unknown",
+        }
+
+
+@dataclass(slots=True)
+class PaymentProjection:
+    """Operational payment/debt visibility.
+
+    Accounting Registry remains owner of accounting sync and 1C posting.
+    Operational Registry stores projection/read model only.
+    """
+
+    payment_projection_id: str
+    order_id: str
+    client_account_id: str
+    total_amount: float
+    paid_amount: float
+    currency: str = "UAH"
+    accounting_invoice_ref: str | None = None
+    accounting_payment_ref: str | None = None
+    one_c_document_ref: str | None = None
+    payment_status: str = "not_invoiced"
+    due_date: datetime | None = None
+    last_payment_seen_at: datetime | None = None
+    source_system: str = "manual"
+    sync_confidence: str = "unknown"
+    notes: str | None = None
+    created_at: datetime = field(default_factory=utc_now)
+    updated_at: datetime = field(default_factory=utc_now)
+
+    def __post_init__(self) -> None:
+        if not self.payment_projection_id:
+            raise ValueError("payment_projection_id is required")
+
+        if not self.order_id:
+            raise ValueError("order_id is required")
+
+        if not self.client_account_id:
+            raise ValueError("client_account_id is required")
+
+        if self.total_amount < 0:
+            raise ValueError("total_amount must not be negative")
+
+        if self.paid_amount < 0:
+            raise ValueError("paid_amount must not be negative")
+
+        if self.paid_amount > self.total_amount:
+            raise ValueError("paid_amount must not exceed total_amount")
+
+        if not self.currency:
+            raise ValueError("currency is required")
+
+        if not self.source_system:
+            raise ValueError("source_system is required")
+
+        ensure_in(self.payment_status, PAYMENT_VISIBILITY_STATUSES, "payment_status")
+
+    @property
+    def unpaid_amount(self) -> float:
+        """Calculate unpaid amount for operational visibility."""
+
+        return round(self.total_amount - self.paid_amount, 2)
+
+
+@dataclass(frozen=True, slots=True)
+class WorkflowStageTemplate:
+    """Stage definition inside WorkflowTemplate."""
+
+    stage_code: str
+    stage_name: str
+    default_order: int
+    default_duration_minutes: int | None = None
+    responsible_role: str | None = None
+    default_contractor_type: str | None = None
+    can_be_manual_override: bool = True
+    is_required: bool = True
+
+    def __post_init__(self) -> None:
+        if not self.stage_code:
+            raise ValueError("stage_code is required")
+
+        if not self.stage_name:
+            raise ValueError("stage_name is required")
+
+        if self.default_order <= 0:
+            raise ValueError("default_order must be positive")
+
+        if self.default_duration_minutes is not None and self.default_duration_minutes <= 0:
+            raise ValueError("default_duration_minutes must be positive")
+
+
+@dataclass(slots=True)
+class WorkflowTemplate:
+    """Default order/product workflow template."""
+
+    workflow_template_id: str
+    template_name: str
+    template_type: str
+    version: str
+    stages: tuple[WorkflowStageTemplate, ...]
+    applies_to_product_id: str | None = None
+    applies_to_service_id: str | None = None
+    applies_to_order_type: str | None = None
+    status: str = "draft"
+    created_at: datetime = field(default_factory=utc_now)
+    updated_at: datetime = field(default_factory=utc_now)
+
+    def __post_init__(self) -> None:
+        if not self.workflow_template_id:
+            raise ValueError("workflow_template_id is required")
+
+        if not self.template_name:
+            raise ValueError("template_name is required")
+
+        if not self.template_type:
+            raise ValueError("template_type is required")
+
+        if not self.version:
+            raise ValueError("version is required")
+
+        if not self.stages:
+            raise ValueError("stages are required")
+
+        self.stages = tuple(sorted(self.stages, key=lambda stage: stage.default_order))
+
+
+@dataclass(slots=True)
+class WorkflowStage:
+    """Actual workflow stage for an order/order line."""
+
+    workflow_stage_id: str
+    order_id: str
+    stage_code: str
+    stage_name: str
+    stage_order: int
+    order_line_id: str | None = None
+    status: str = "not_started"
+    assigned_to: str | None = None
+    contractor_ref: str | None = None
+    subcontractor_ref: str | None = None
+    planned_start_at: datetime | None = None
+    planned_finish_at: datetime | None = None
+    actual_start_at: datetime | None = None
+    actual_finish_at: datetime | None = None
+    deadline_at: datetime | None = None
+    source_template_id: str | None = None
+    manual_override_reason: str | None = None
+    is_manual_stage: bool = False
+    is_skipped: bool = False
+    created_at: datetime = field(default_factory=utc_now)
+    updated_at: datetime = field(default_factory=utc_now)
+    notes: str | None = None
+
+    def __post_init__(self) -> None:
+        if not self.workflow_stage_id:
+            raise ValueError("workflow_stage_id is required")
+
+        if not self.order_id:
+            raise ValueError("order_id is required")
+
+        if not self.stage_code:
+            raise ValueError("stage_code is required")
+
+        if not self.stage_name:
+            raise ValueError("stage_name is required")
+
+        if self.stage_order <= 0:
+            raise ValueError("stage_order must be positive")
+
+        ensure_in(self.status, WORKFLOW_STATUSES, "status")
+
+        if self.is_manual_stage and not self.manual_override_reason:
+            raise ValueError("manual_override_reason is required for manual stage")
+
+    def is_late(self, now: datetime | None = None) -> bool:
+        """Return whether stage is late."""
+
+        if self.deadline_at is None:
+            return False
+
+        if self.status in {"completed", "cancelled"}:
+            return False
+
+        checked_at = now or utc_now()
+        return checked_at > self.deadline_at
+
+
+@dataclass(slots=True)
+class ContractorReference:
+    """Flexible contractor/subcontractor reference.
+
+    This does not create a full supplier/contractor module.
+    """
+
+    contractor_reference_id: str
+    contractor_type: str
+    display_name: str
+    client_account_id: str | None = None
+    external_reference_id: str | None = None
+    source_system: str = "manual"
+    resolution_status: str = "display_only"
+    notes: str | None = None
+
+    def __post_init__(self) -> None:
+        if not self.contractor_reference_id:
+            raise ValueError("contractor_reference_id is required")
+
+        if not self.contractor_type:
+            raise ValueError("contractor_type is required")
+
+        if not self.display_name:
+            raise ValueError("display_name is required")
+
+        if not self.source_system:
+            raise ValueError("source_system is required")
+
+        ensure_in(
+            self.resolution_status,
+            CONTRACTOR_RESOLUTION_STATUSES,
+            "resolution_status",
+        )
+
+        if (
+            self.resolution_status == "client_account_reference_confirmed"
+            and not self.client_account_id
+        ):
+            raise ValueError("client_account_id is required when contractor reference is confirmed")
+
+
+@dataclass(slots=True)
+class DeadlineControlRecord:
+    """Deadline control record for operational monitoring."""
+
+    deadline_control_id: str
+    target_entity_type: str
+    target_entity_id: str
+    deadline_type: str
+    deadline_at: datetime
+    warning_before_minutes: int | None = None
+    status: str = "active"
+    last_checked_at: datetime | None = None
+    notes: str | None = None
+
+    def __post_init__(self) -> None:
+        if not self.deadline_control_id:
+            raise ValueError("deadline_control_id is required")
+
+        if not self.target_entity_type:
+            raise ValueError("target_entity_type is required")
+
+        if not self.target_entity_id:
+            raise ValueError("target_entity_id is required")
+
+        ensure_in(self.deadline_type, DEADLINE_TYPES, "deadline_type")
+        ensure_in(self.status, DEADLINE_STATUSES, "status")
+
+        if self.warning_before_minutes is not None and self.warning_before_minutes < 0:
+            raise ValueError("warning_before_minutes must not be negative")
