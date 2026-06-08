@@ -1,0 +1,20 @@
+fixture_status: example
+contains_real_business_data: false
+record:
+  report_definition_id: report_def_demo_client_order_history
+  report_name: Demo Client Order History
+  report_type: client_order_history
+  description: "Synthetic report definition for future reporting design."
+  dimensions:
+    - client_account_id
+    - product_or_service_ref
+    - period
+  metrics:
+    - order_count
+    - total_amount_reference
+  filters:
+    status:
+      - completed
+      - in_production
+  default_period: monthly
+  status: draft

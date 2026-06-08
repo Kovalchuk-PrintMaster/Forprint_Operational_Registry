@@ -1,0 +1,16 @@
+fixture_status: example
+contains_real_business_data: false
+record:
+  fact_id: fact_demo_order_line_001
+  fact_type: future_order_line
+  business_date: "2026-06-08T00:00:00+00:00"
+  client_account_id: acc_demo_org_001
+  source_system: sanitized_demo
+  source_ref: demo_order_ref_001
+  status: active
+  raw_values:
+    imported_quantity:
+      raw_value: "10 шт raw"
+      normalized_value: "10"
+      source_system: sanitized_demo
+      source_ref: demo_order_ref_001

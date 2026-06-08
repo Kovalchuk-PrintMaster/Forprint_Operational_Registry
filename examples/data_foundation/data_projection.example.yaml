@@ -1,0 +1,33 @@
+fixture_status: example
+contains_real_business_data: false
+record:
+  projection_id: projection_demo_client_order_history_001
+  projection_type: client_order_history
+  generated_at: "2026-06-08T00:00:00+00:00"
+  period_start: "2026-06-01T00:00:00+00:00"
+  period_end: "2026-06-30T23:59:59+00:00"
+  dimensions:
+    - client_account_id
+    - product_or_service_ref
+    - period
+  metrics:
+    - order_count
+    - total_amount_reference
+  rows:
+    - client_account_id: acc_demo_org_001
+      product_or_service_ref: future_library_product_ref_demo
+      period: "2026-06"
+      order_count: 3
+      total_amount_reference: demo_amount_ref_only
+  source_refs:
+    order_fact_source: fact_demo_order_line_001
+  warnings:
+    - "Projection is synthetic and reference-only."
+example_report_questions:
+  - Which client ordered which product/service in which period?
+  - Which material was used for which product/order/client?
+  - Which products are seasonal?
+  - Which clients are active/inactive/dead?
+  - Which payments are overdue?
+  - Which workflow stages are late?
+  - Which material may be needed soon?

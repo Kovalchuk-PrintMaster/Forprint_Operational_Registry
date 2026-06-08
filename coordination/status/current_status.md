@@ -59,3 +59,37 @@ Canonical customer/account truth remains:
 client_account_id
 
 ---
+
+## Data Foundation Strategy v0.1
+
+Operational Registry now has policy/base abstractions for future operational data modeling.
+
+Added concepts:
+
+```text
+MasterDataRecord
+OperationalFactRecord
+OperationalEventRecord
+ExternalReference
+DataProjection
+ReportDefinition
+RawNormalizedValue
+
+Added terminal preview:
+
+make data-foundation-preview
+
+Boundary:
+
+No real product card.
+No real material catalog.
+No real supplier card.
+No real accounting sync.
+No real 1C write.
+No production API.
+No web UI.
+No Telegram notification.
+No Calculator runtime integration.
+No Warehouse stock truth.
+
+---

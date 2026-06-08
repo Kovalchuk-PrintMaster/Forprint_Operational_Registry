@@ -16,6 +16,15 @@ from forprint_operational_registry.models.client_account import (
     LegacyClientImportMapping,
     LegalEntityProfile,
 )
+from forprint_operational_registry.models.data_foundation import (
+    DataProjection,
+    ExternalReference,
+    MasterDataRecord,
+    OperationalEventRecord,
+    OperationalFactRecord,
+    RawNormalizedValue,
+    ReportDefinition,
+)
 from forprint_operational_registry.models.event import OperationalEvent
 from forprint_operational_registry.models.note import OperationalNote
 from forprint_operational_registry.models.order import OrderRecord
@@ -42,4 +51,11 @@ __all__ = [
     "ExternalAccountingReference",
     "LegacyClientImportMapping",
     "LegalEntityProfile",
+    "DataProjection",
+    "ExternalReference",
+    "MasterDataRecord",
+    "OperationalEventRecord",
+    "OperationalFactRecord",
+    "RawNormalizedValue",
+    "ReportDefinition",
 ]

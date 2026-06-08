@@ -4,6 +4,7 @@ PIP ?= .venv_operational_registry/bin/pip
 .PHONY: install test lint lint-fix check check-report status-report format 
 	clean client-card-preview blueprint-pull blueprint-check blueprint-sync-directives 
 	coordination-check coordination-fix module-policy-check
+	data-foundation-preview
 
 install:
 	python3.11 -m venv .venv_operational_registry
@@ -62,3 +63,6 @@ coordination-fix:
 
 module-policy-check:
 	$(PYTHON) scripts/run_operational_registry_checks.py
+
+data-foundation-preview:
+	$(PYTHON) scripts/data_foundation_preview.py

@@ -27,6 +27,9 @@ from forprint_operational_registry.services.registry_checks import (  # noqa: E4
     validate_client_account_foundation_files,
     validate_client_card_examples,
     validate_coordination_files,
+    validate_data_foundation_docs,
+    validate_data_foundation_examples,
+    validate_data_foundation_files,
     validate_foreign_import_boundary,
     validate_handoff_fixtures,
     validate_macro_pack_files,
@@ -332,6 +335,41 @@ def build_check_report(run_external: bool = True) -> dict[str, object]:
             command=[
                 sys.executable,
                 "scripts/client_card_preview.py",
+            ],
+        )
+    )
+
+    steps.append(
+        run_internal_check(
+            name="Data foundation docs",
+            expected_result="Data foundation architecture docs exist",
+            errors=validate_data_foundation_docs(PROJECT_ROOT),
+        )
+    )
+
+    steps.append(
+        run_internal_check(
+            name="Data foundation concepts",
+            expected_result="Base model concepts and preview files exist",
+            errors=validate_data_foundation_files(PROJECT_ROOT),
+        )
+    )
+
+    steps.append(
+        run_internal_check(
+            name="Data foundation examples",
+            expected_result="Safe data foundation example fixtures are valid",
+            errors=validate_data_foundation_examples(PROJECT_ROOT),
+        )
+    )
+
+    steps.append(
+        run_command(
+            name="Data foundation preview",
+            expected_result="Terminal data foundation preview renders successfully",
+            command=[
+                sys.executable,
+                "scripts/data_foundation_preview.py",
             ],
         )
     )

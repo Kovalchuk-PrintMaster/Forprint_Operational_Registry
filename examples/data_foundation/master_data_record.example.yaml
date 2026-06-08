@@ -1,0 +1,15 @@
+fixture_status: example
+contains_real_business_data: false
+record:
+  internal_id: md_demo_product_family_001
+  entity_type: future_product_family
+  display_name: Demo Product Family
+  canonical_name: demo_product_family
+  status: active
+  source_system: sanitized_demo
+  raw_source_name: "Raw imported demo product family name"
+  valid_from: "2026-01-01T00:00:00+00:00"
+  valid_to:
+policy_notes:
+  - internal_id is logic truth.
+  - display_name is editable and not canonical truth.

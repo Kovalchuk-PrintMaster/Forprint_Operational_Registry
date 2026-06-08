@@ -22,12 +22,20 @@ def test_client_account_checkpoint_c_coordination_files_exist() -> None:
         assert (PROJECT_ROOT / relative_path).exists()
 
 
-def test_current_status_mentions_client_account_phase() -> None:
+def test_current_status_keeps_client_account_checkpoint_history() -> None:
     data = yaml.safe_load(
         (PROJECT_ROOT / "coordination/status/current_status.yaml").read_text(encoding="utf-8")
     )
 
-    assert data["current_phase"] == "client_account_card_foundation_v0_1"
+    assert data["current_phase"] in {
+        "client_account_card_foundation_v0_1",
+        "data_foundation_strategy_v0_1",
+    }
+
+    notes = "\n".join(data.get("notes", []))
+    assert "ClientAccount card foundation models are added" in notes
+    assert "client_account_id remains canonical customer/account truth" in notes
+
     assert data["validation"]["make_check"] == "ok"
     assert data["boundaries"]["production_api_added"] is False
     assert data["boundaries"]["real_integrations_added"] is False

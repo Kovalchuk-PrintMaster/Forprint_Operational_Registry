@@ -1,0 +1,14 @@
+fixture_status: example
+contains_real_business_data: false
+record:
+  event_id: evt_demo_001
+  event_type: order_status_changed
+  target_entity_type: order
+  target_entity_id: order_demo_001
+  occurred_at: "2026-06-08T00:00:00+00:00"
+  actor_ref: operator_demo
+  source_system: sanitized_demo
+  payload:
+    from_status: new
+    to_status: needs_review
+  notes: "Synthetic event example. Append-only concept."

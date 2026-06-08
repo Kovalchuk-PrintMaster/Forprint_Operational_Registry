@@ -264,6 +264,33 @@ REQUIRED_MAKE_TARGETS: tuple[str, ...] = (
     "module-policy-check",
 )
 
+REQUIRED_DATA_FOUNDATION_DOCS: tuple[str, ...] = (
+    "docs/architecture/data_foundation_strategy.md",
+    "docs/architecture/master_data_policy.md",
+    "docs/architecture/operational_fact_policy.md",
+    "docs/architecture/event_log_policy.md",
+    "docs/architecture/reporting_projection_policy.md",
+    "docs/architecture/external_reference_policy.md",
+    "docs/architecture/raw_normalized_value_policy.md",
+    "docs/architecture/data_history_versioning_policy.md",
+    "docs/architecture/one_c_adapter_boundary_policy.md",
+    "docs/architecture/entity_card_design_policy.md",
+)
+
+REQUIRED_DATA_FOUNDATION_FILES: tuple[str, ...] = (
+    "app/forprint_operational_registry/models/data_foundation.py",
+    "scripts/data_foundation_preview.py",
+)
+
+REQUIRED_DATA_FOUNDATION_EXAMPLES: tuple[str, ...] = (
+    "examples/data_foundation/master_data_record.example.yaml",
+    "examples/data_foundation/operational_fact_record.example.yaml",
+    "examples/data_foundation/operational_event_record.example.yaml",
+    "examples/data_foundation/external_reference.example.yaml",
+    "examples/data_foundation/report_definition.example.yaml",
+    "examples/data_foundation/data_projection.example.yaml",
+)
+
 
 def load_yaml(path: Path) -> dict[str, Any]:
     """Load YAML file as dictionary."""
@@ -721,5 +748,51 @@ def validate_makefile_standard_targets(project_root: Path) -> list[str]:
     for target in REQUIRED_MAKE_TARGETS:
         if f"{target}:" not in text:
             errors.append(f"Makefile target is missing: {target}")
+
+    return errors
+
+
+def validate_data_foundation_docs(project_root: Path) -> list[str]:
+    """Validate data foundation architecture docs."""
+
+    errors: list[str] = []
+
+    for relative_path in REQUIRED_DATA_FOUNDATION_DOCS:
+        if not (project_root / relative_path).exists():
+            errors.append(f"data foundation doc is missing: {relative_path}")
+
+    return errors
+
+
+def validate_data_foundation_files(project_root: Path) -> list[str]:
+    """Validate data foundation model/preview files."""
+
+    errors: list[str] = []
+
+    for relative_path in REQUIRED_DATA_FOUNDATION_FILES:
+        if not (project_root / relative_path).exists():
+            errors.append(f"data foundation file is missing: {relative_path}")
+
+    return errors
+
+
+def validate_data_foundation_examples(project_root: Path) -> list[str]:
+    """Validate data foundation examples."""
+
+    errors: list[str] = []
+
+    for relative_path in REQUIRED_DATA_FOUNDATION_EXAMPLES:
+        path = project_root / relative_path
+        if not path.exists():
+            errors.append(f"data foundation example is missing: {relative_path}")
+            continue
+
+        data = load_yaml(path)
+
+        if data.get("fixture_status") != "example":
+            errors.append(f"{relative_path}: fixture_status must be example")
+
+        if data.get("contains_real_business_data") is not False:
+            errors.append(f"{relative_path}: contains_real_business_data must be false")
 
     return errors
