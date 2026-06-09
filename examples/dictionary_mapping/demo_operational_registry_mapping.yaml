@@ -1,0 +1,19 @@
+fixture_status: example
+contains_real_business_data: false
+purpose: demo_operational_registry_dictionary_mapping
+sample_mappings:
+  - local_group: order_status
+    local_value: needs_review
+    library_dictionary_group: order_status
+    library_canonical_id: order_status.needs_review
+    mapping_status: confirmed
+  - local_group: product_service_reference_status
+    local_value: ambiguous_manual_review_required
+    library_dictionary_group: product_service_reference_status
+    library_canonical_id: product_service_reference_status.ambiguous_manual_review_required
+    mapping_status: manual_review_required
+  - local_group: payment_status
+    local_value: paid
+    library_dictionary_group: payment_status
+    library_canonical_id: payment_status.paid
+    mapping_status: deprecated_reference

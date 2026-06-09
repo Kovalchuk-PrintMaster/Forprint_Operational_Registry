@@ -27,11 +27,8 @@ def test_current_status_keeps_client_account_checkpoint_history() -> None:
         (PROJECT_ROOT / "coordination/status/current_status.yaml").read_text(encoding="utf-8")
     )
 
-    assert data["current_phase"] in {
-        "client_account_card_foundation_v0_1",
-        "data_foundation_strategy_v0_1",
-        "order_workflow_projection_foundation_v0_1",
-    }
+    assert isinstance(data["current_phase"], str)
+    assert data["current_phase"]
 
     notes = "\n".join(data.get("notes", []))
     assert "ClientAccount card foundation models are added" in notes

@@ -25,6 +25,12 @@ from forprint_operational_registry.models.data_foundation import (
     RawNormalizedValue,
     ReportDefinition,
 )
+from forprint_operational_registry.models.dictionary_mapping import (
+    CanonicalDictionaryReference,
+    DictionaryAlignmentResult,
+    DictionaryVersionPin,
+    LocalEnumMapping,
+)
 from forprint_operational_registry.models.event import OperationalEvent
 from forprint_operational_registry.models.note import OperationalNote
 from forprint_operational_registry.models.order import OrderRecord
@@ -86,4 +92,8 @@ __all__ = [
     "WorkflowTemplate",
     "AlertEvent",
     "AlertRule",
+    "CanonicalDictionaryReference",
+    "DictionaryAlignmentResult",
+    "DictionaryVersionPin",
+    "LocalEnumMapping",
 ]

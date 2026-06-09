@@ -24,3 +24,7 @@ reports:
   status: completed
   phase: order_workflow_projection_foundation_v0_1
   report_file: coordination/reports/completion/2026-06-08__forprint_operational_registry__report__order-workflow-projection-foundation-v0-1.md
+- report_id: 2026-06-09__forprint_operational_registry__report__canonical-dictionary-mapping-v0-1
+  path: coordination/reports/completion/2026-06-09__forprint_operational_registry__report__canonical-dictionary-mapping-v0-1.md
+  status: completed
+  phase: canonical_dictionary_mapping_v0_1

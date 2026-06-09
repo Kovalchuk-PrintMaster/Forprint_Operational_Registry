@@ -6,6 +6,7 @@ PIP ?= .venv_operational_registry/bin/pip
 	coordination-check coordination-fix module-policy-check
 	data-foundation-preview order-preview workflow-preview payment-preview 
 	material-requirement-preview alert-preview operational-report-preview
+	dictionary-mapping-preview
 
 install:
 	python3.11 -m venv .venv_operational_registry
@@ -85,3 +86,6 @@ alert-preview:
 
 operational-report-preview:
 	$(PYTHON) scripts/order_workflow_preview.py report
+
+dictionary-mapping-preview:
+	$(PYTHON) scripts/dictionary_mapping_preview.py

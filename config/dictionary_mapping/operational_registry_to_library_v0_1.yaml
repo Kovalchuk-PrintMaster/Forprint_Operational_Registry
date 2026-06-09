@@ -1,0 +1,190 @@
+fixture_status: config
+mapping_scope: operational_registry_to_library
+library_authority: forprint_library
+library_dictionary_version: shared_operational_dictionary_v0_1
+runtime_library_dependency: false
+operational_registry_edits_library: false
+
+dictionary_version_pin:
+  dictionary_version_pin_id: dict_pin_operational_registry_v0_1
+  library_dictionary_version: shared_operational_dictionary_v0_1
+  library_commit_ref:
+  status: active
+  notes: Reference-only pin. No runtime Library dependency.
+
+mappings:
+  source_system:
+    manual: {canonical_id: source_system.manual, status: confirmed}
+    sanitized_demo: {canonical_id: source_system.sanitized_demo, status: intentionally_local}
+    calculator_engine: {canonical_id: source_system.calculator_engine, status: confirmed}
+    1c_bas: {canonical_id: source_system.1c_bas, status: confirmed}
+    telegram_bot_legacy: {canonical_id: source_system.telegram_bot_legacy, status: confirmed_with_alias}
+    unknown: {canonical_id: source_system.unknown, status: confirmed}
+
+  entity_type:
+    client_account: {canonical_id: entity_type.client_account, status: confirmed}
+    order: {canonical_id: entity_type.order, status: confirmed}
+    order_line: {canonical_id: entity_type.order_line, status: confirmed}
+    workflow_stage: {canonical_id: entity_type.workflow_stage, status: confirmed}
+    payment_projection: {canonical_id: entity_type.payment_projection, status: confirmed}
+    material_requirement: {canonical_id: entity_type.material_requirement, status: confirmed}
+    alert_rule: {canonical_id: entity_type.alert_rule, status: confirmed}
+    alert_event: {canonical_id: entity_type.alert_event, status: confirmed}
+    external_reference: {canonical_id: entity_type.external_reference, status: confirmed}
+    report_projection: {canonical_id: entity_type.report_projection, status: confirmed}
+    unknown: {canonical_id: entity_type.unknown, status: confirmed}
+
+  order_status:
+    draft: {canonical_id: order_status.draft, status: confirmed}
+    new: {canonical_id: order_status.new, status: confirmed}
+    needs_review: {canonical_id: order_status.needs_review, status: confirmed}
+    quote_pending: {canonical_id: order_status.quote_pending, status: confirmed}
+    quote_accepted: {canonical_id: order_status.quote_accepted, status: confirmed}
+    payment_reference_pending: {canonical_id: order_status.payment_reference_pending, status: confirmed}
+    payment_reference_confirmed: {canonical_id: order_status.payment_reference_confirmed, status: confirmed}
+    in_workflow: {canonical_id: order_status.in_workflow, status: confirmed}
+    in_production: {canonical_id: order_status.in_production, status: confirmed}
+    completed: {canonical_id: order_status.completed, status: confirmed}
+    cancelled: {canonical_id: order_status.cancelled, status: confirmed}
+    blocked: {canonical_id: order_status.blocked, status: confirmed}
+    unknown: {canonical_id: order_status.unknown, status: confirmed}
+
+  order_line_status:
+    draft: {canonical_id: order_line_status.draft, status: confirmed}
+    new: {canonical_id: order_line_status.new, status: confirmed}
+    needs_review: {canonical_id: order_line_status.needs_review, status: confirmed}
+    quote_pending: {canonical_id: order_line_status.quote_pending, status: confirmed}
+    quote_accepted: {canonical_id: order_line_status.quote_accepted, status: confirmed}
+    payment_reference_pending: {canonical_id: order_line_status.payment_reference_pending, status: confirmed}
+    payment_reference_confirmed: {canonical_id: order_line_status.payment_reference_confirmed, status: confirmed}
+    in_workflow: {canonical_id: order_line_status.in_workflow, status: confirmed}
+    in_production: {canonical_id: order_line_status.in_production, status: confirmed}
+    completed: {canonical_id: order_line_status.completed, status: confirmed}
+    cancelled: {canonical_id: order_line_status.cancelled, status: confirmed}
+    blocked: {canonical_id: order_line_status.blocked, status: confirmed}
+    unknown: {canonical_id: order_line_status.unknown, status: confirmed}
+
+  payment_status:
+    not_invoiced: {canonical_id: payment_status.not_invoiced, status: confirmed}
+    invoice_reference_pending: {canonical_id: payment_status.invoice_reference_pending, status: confirmed}
+    unpaid: {canonical_id: payment_status.unpaid, status: confirmed}
+    partially_paid: {canonical_id: payment_status.partially_paid, status: confirmed}
+    paid_reference_confirmed: {canonical_id: payment_status.paid_reference_confirmed, status: confirmed}
+    overdue: {canonical_id: payment_status.overdue, status: confirmed}
+    cancelled: {canonical_id: payment_status.cancelled, status: confirmed}
+    unknown: {canonical_id: payment_status.unknown, status: confirmed}
+    paid: {canonical_id: payment_status.paid, status: deprecated_reference}
+
+  production_status:
+    not_started: {canonical_id: production_status.not_started, status: confirmed}
+    waiting_prepress: {canonical_id: production_status.waiting_prepress, status: confirmed}
+    ready_for_production: {canonical_id: production_status.ready_for_production, status: confirmed}
+    in_production: {canonical_id: production_status.in_production, status: confirmed}
+    ready_for_pickup: {canonical_id: production_status.ready_for_pickup, status: confirmed}
+    completed: {canonical_id: production_status.completed, status: confirmed}
+    blocked: {canonical_id: production_status.blocked, status: confirmed}
+    cancelled: {canonical_id: production_status.cancelled, status: confirmed}
+    unknown: {canonical_id: production_status.unknown, status: confirmed}
+
+  workflow_status:
+    not_started: {canonical_id: workflow_status.not_started, status: confirmed}
+    ready: {canonical_id: workflow_status.ready, status: confirmed}
+    in_progress: {canonical_id: workflow_status.in_progress, status: confirmed}
+    blocked: {canonical_id: workflow_status.blocked, status: confirmed}
+    waiting_external_contractor: {canonical_id: workflow_status.waiting_external_contractor, status: confirmed}
+    completed: {canonical_id: workflow_status.completed, status: confirmed}
+    cancelled: {canonical_id: workflow_status.cancelled, status: confirmed}
+    late: {canonical_id: workflow_status.late, status: confirmed}
+    manual_review_required: {canonical_id: workflow_status.manual_review_required, status: confirmed}
+    unknown: {canonical_id: workflow_status.unknown, status: confirmed}
+
+  workflow_stage_status:
+    not_started: {canonical_id: workflow_stage_status.not_started, status: confirmed}
+    ready: {canonical_id: workflow_stage_status.ready, status: confirmed}
+    in_progress: {canonical_id: workflow_stage_status.in_progress, status: confirmed}
+    blocked: {canonical_id: workflow_stage_status.blocked, status: confirmed}
+    waiting_external_contractor: {canonical_id: workflow_stage_status.waiting_external_contractor, status: confirmed}
+    completed: {canonical_id: workflow_stage_status.completed, status: confirmed}
+    cancelled: {canonical_id: workflow_stage_status.cancelled, status: confirmed}
+    late: {canonical_id: workflow_stage_status.late, status: confirmed}
+    manual_review_required: {canonical_id: workflow_stage_status.manual_review_required, status: confirmed}
+    unknown: {canonical_id: workflow_stage_status.unknown, status: confirmed}
+
+  material_requirement_status:
+    planned: {canonical_id: material_requirement_status.planned, status: confirmed}
+    library_reference_pending: {canonical_id: material_requirement_status.library_reference_pending, status: confirmed}
+    warehouse_reference_pending: {canonical_id: material_requirement_status.warehouse_reference_pending, status: confirmed}
+    reserved_reference_pending: {canonical_id: material_requirement_status.reserved_reference_pending, status: confirmed}
+    confirmed: {canonical_id: material_requirement_status.confirmed, status: confirmed}
+    fulfilled: {canonical_id: material_requirement_status.fulfilled, status: confirmed}
+    cancelled: {canonical_id: material_requirement_status.cancelled, status: confirmed}
+    unknown: {canonical_id: material_requirement_status.unknown, status: confirmed}
+
+  reference_resolution_status:
+    draft_display_only: {canonical_id: reference_resolution_status.draft_display_only, status: confirmed}
+    library_reference_pending: {canonical_id: reference_resolution_status.library_reference_pending, status: confirmed}
+    library_reference_confirmed: {canonical_id: reference_resolution_status.library_reference_confirmed, status: confirmed}
+    ambiguous_manual_review_required: {canonical_id: reference_resolution_status.ambiguous_manual_review_required, status: manual_review_required}
+    deprecated_reference: {canonical_id: reference_resolution_status.deprecated_reference, status: deprecated_reference}
+    unknown: {canonical_id: reference_resolution_status.unknown, status: confirmed}
+
+  product_service_reference_status:
+    draft_display_only: {canonical_id: product_service_reference_status.draft_display_only, status: confirmed}
+    library_reference_pending: {canonical_id: product_service_reference_status.library_reference_pending, status: confirmed}
+    library_reference_confirmed: {canonical_id: product_service_reference_status.library_reference_confirmed, status: confirmed}
+    ambiguous_manual_review_required: {canonical_id: product_service_reference_status.ambiguous_manual_review_required, status: manual_review_required}
+    deprecated_reference: {canonical_id: product_service_reference_status.deprecated_reference, status: deprecated_reference}
+    unknown: {canonical_id: product_service_reference_status.unknown, status: confirmed}
+
+  contractor_reference_status:
+    display_only: {canonical_id: contractor_reference_status.display_only, status: confirmed}
+    client_account_reference_pending: {canonical_id: contractor_reference_status.client_account_reference_pending, status: confirmed}
+    client_account_reference_confirmed: {canonical_id: contractor_reference_status.client_account_reference_confirmed, status: confirmed}
+    external_reference_pending: {canonical_id: contractor_reference_status.external_reference_pending, status: confirmed}
+    manual_review_required: {canonical_id: contractor_reference_status.manual_review_required, status: manual_review_required}
+
+  deadline_type:
+    order_due: {canonical_id: deadline_type.order_due, status: confirmed}
+    stage_due: {canonical_id: deadline_type.stage_due, status: confirmed}
+    payment_due: {canonical_id: deadline_type.payment_due, status: confirmed}
+    material_required_by: {canonical_id: deadline_type.material_required_by, status: confirmed}
+    manual_review_due: {canonical_id: deadline_type.manual_review_due, status: confirmed}
+
+  alert_rule_type:
+    workflow_stage_late: {canonical_id: alert_rule_type.workflow_stage_late, status: confirmed}
+    order_deadline_near: {canonical_id: alert_rule_type.order_deadline_near, status: confirmed}
+    payment_overdue: {canonical_id: alert_rule_type.payment_overdue, status: confirmed}
+    material_requirement_unresolved: {canonical_id: alert_rule_type.material_requirement_unresolved, status: confirmed}
+    manual_review_stale: {canonical_id: alert_rule_type.manual_review_stale, status: confirmed}
+    contractor_stage_blocked: {canonical_id: alert_rule_type.contractor_stage_blocked, status: confirmed}
+    unknown: {canonical_id: alert_rule_type.unknown, status: confirmed}
+
+  alert_severity:
+    info: {canonical_id: alert_severity.info, status: confirmed}
+    warning: {canonical_id: alert_severity.warning, status: confirmed}
+    high: {canonical_id: alert_severity.high, status: confirmed}
+    critical: {canonical_id: alert_severity.critical, status: confirmed}
+    unknown: {canonical_id: alert_severity.unknown, status: confirmed}
+
+  alert_event_status:
+    open: {canonical_id: alert_event_status.open, status: confirmed}
+    acknowledged: {canonical_id: alert_event_status.acknowledged, status: confirmed}
+    resolved: {canonical_id: alert_event_status.resolved, status: confirmed}
+    ignored: {canonical_id: alert_event_status.ignored, status: confirmed}
+    failed_to_notify: {canonical_id: alert_event_status.failed_to_notify, status: confirmed}
+
+  notification_status:
+    not_sent: {canonical_id: notification_status.not_sent, status: confirmed}
+    queued_future: {canonical_id: notification_status.queued_future, status: confirmed}
+    sent_reference_only: {canonical_id: notification_status.sent_reference_only, status: confirmed}
+    failed: {canonical_id: notification_status.failed, status: confirmed}
+    not_required: {canonical_id: notification_status.not_required, status: confirmed}
+
+  unit:
+    pcs: {canonical_id: unit.pcs, status: confirmed}
+    m2: {canonical_id: unit.m2, status: confirmed}
+    m: {canonical_id: unit.m, status: confirmed}
+    kg: {canonical_id: unit.kg, status: confirmed}
+    liter: {canonical_id: unit.liter, status: confirmed}
+    hour: {canonical_id: unit.hour, status: confirmed}
+    unknown: {canonical_id: unit.unknown, status: confirmed}

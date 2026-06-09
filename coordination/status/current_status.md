@@ -140,3 +140,27 @@ No final product/material catalog.
 
 ---
 
+## Canonical Dictionary Mapping v0.1
+
+Operational Registry now has a semantic alignment layer for Library shared operational dictionaries.
+
+Added:
+
+```text
+CanonicalDictionaryReference
+LocalEnumMapping
+DictionaryVersionPin
+DictionaryAlignmentResult
+dictionary mapping config
+dictionary mapping validator
+dictionary mapping preview
+
+Boundary:
+
+No Library dictionary edits.
+No runtime Library integration.
+No product/material catalog.
+No production API.
+No web UI.
+No Telegram notification.
+No 1C sync/write.

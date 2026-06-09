@@ -333,6 +333,22 @@ REQUIRED_ORDER_WORKFLOW_PREVIEW_TARGETS: tuple[str, ...] = (
     "operational-report-preview",
 )
 
+REQUIRED_DICTIONARY_MAPPING_DOCS: tuple[str, ...] = (
+    "docs/architecture/library_dictionary_consumption_policy.md",
+    "docs/architecture/canonical_status_mapping_policy.md",
+    "docs/architecture/local_enum_drift_detection_policy.md",
+    "docs/architecture/dictionary_version_pin_policy.md",
+    "docs/architecture/operational_registry_dictionary_alignment.md",
+)
+
+REQUIRED_DICTIONARY_MAPPING_FILES: tuple[str, ...] = (
+    "app/forprint_operational_registry/models/dictionary_mapping.py",
+    "app/forprint_operational_registry/services/dictionary_mapping.py",
+    "scripts/dictionary_mapping_preview.py",
+    "config/dictionary_mapping/operational_registry_to_library_v0_1.yaml",
+    "examples/dictionary_mapping/demo_operational_registry_mapping.yaml",
+)
+
 
 def load_yaml(path: Path) -> dict[str, Any]:
     """Load YAML file as dictionary."""
@@ -901,3 +917,89 @@ def validate_order_workflow_preview_targets(project_root: Path) -> list[str]:
             errors.append(f"Makefile target is missing: {target}")
 
     return errors
+
+
+def validate_dictionary_mapping_docs(project_root: Path) -> list[str]:
+    """Validate dictionary mapping docs."""
+
+    errors: list[str] = []
+
+    for relative_path in REQUIRED_DICTIONARY_MAPPING_DOCS:
+        if not (project_root / relative_path).exists():
+            errors.append(f"dictionary mapping doc is missing: {relative_path}")
+
+    return errors
+
+
+def validate_dictionary_mapping_files(project_root: Path) -> list[str]:
+    """Validate dictionary mapping files."""
+
+    errors: list[str] = []
+
+    for relative_path in REQUIRED_DICTIONARY_MAPPING_FILES:
+        if not (project_root / relative_path).exists():
+            errors.append(f"dictionary mapping file is missing: {relative_path}")
+
+    return errors
+
+
+def validate_dictionary_mapping_config(project_root: Path) -> list[str]:
+    """Validate dictionary mapping config."""
+
+    errors: list[str] = []
+
+    try:
+        from forprint_operational_registry.services.dictionary_mapping import (
+            load_local_dictionary_mapping,
+            validate_local_dictionary_mapping,
+        )
+    except ImportError as error:
+        return [f"cannot import dictionary mapping validator: {error}"]
+
+    data = load_local_dictionary_mapping(
+        project_root / "config/dictionary_mapping/operational_registry_to_library_v0_1.yaml"
+    )
+    errors.extend(validate_local_dictionary_mapping(data))
+
+    return errors
+
+
+def validate_dictionary_unmapped_values(project_root: Path) -> list[str]:
+    """Validate no known local enum value is unmapped."""
+
+    try:
+        from forprint_operational_registry.services.dictionary_mapping import (
+            detect_unmapped_local_values,
+            load_local_dictionary_mapping,
+        )
+    except ImportError as error:
+        return [f"cannot import dictionary unmapped checker: {error}"]
+
+    data = load_local_dictionary_mapping(
+        project_root / "config/dictionary_mapping/operational_registry_to_library_v0_1.yaml"
+    )
+    unmapped = detect_unmapped_local_values(data)
+
+    return [f"unmapped local value: {item.local_group}.{item.local_value}" for item in unmapped]
+
+
+def validate_dictionary_version_pin(project_root: Path) -> list[str]:
+    """Validate dictionary version pin exists."""
+
+    try:
+        from forprint_operational_registry.services.dictionary_mapping import (
+            build_dictionary_version_pin,
+            load_local_dictionary_mapping,
+        )
+    except ImportError as error:
+        return [f"cannot import dictionary version pin checker: {error}"]
+
+    data = load_local_dictionary_mapping(
+        project_root / "config/dictionary_mapping/operational_registry_to_library_v0_1.yaml"
+    )
+
+    pin = build_dictionary_version_pin(data)
+    if pin.library_dictionary_version != "shared_operational_dictionary_v0_1":
+        return ["unexpected library dictionary version pin"]
+
+    return []

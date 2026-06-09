@@ -30,6 +30,11 @@ from forprint_operational_registry.services.registry_checks import (  # noqa: E4
     validate_data_foundation_docs,
     validate_data_foundation_examples,
     validate_data_foundation_files,
+    validate_dictionary_mapping_config,
+    validate_dictionary_mapping_docs,
+    validate_dictionary_mapping_files,
+    validate_dictionary_unmapped_values,
+    validate_dictionary_version_pin,
     validate_foreign_import_boundary,
     validate_handoff_fixtures,
     validate_macro_pack_files,
@@ -415,6 +420,53 @@ def build_check_report(run_external: bool = True) -> dict[str, object]:
                 name="Workflow preview",
                 expected_result="Workflow preview renders successfully",
                 command=[sys.executable, "scripts/order_workflow_preview.py", "workflow"],
+            )
+        )
+        steps.append(
+            run_internal_check(
+                name="Library dictionary consumption docs",
+                expected_result="Dictionary consumption/alignment docs exist",
+                errors=validate_dictionary_mapping_docs(PROJECT_ROOT),
+            )
+        )
+
+        steps.append(
+            run_internal_check(
+                name="Canonical status mapping files",
+                expected_result="Dictionary mapping model/service/config files exist",
+                errors=validate_dictionary_mapping_files(PROJECT_ROOT),
+            )
+        )
+
+        steps.append(
+            run_internal_check(
+                name="Dictionary mapping validator",
+                expected_result="Dictionary mapping config is valid",
+                errors=validate_dictionary_mapping_config(PROJECT_ROOT),
+            )
+        )
+
+        steps.append(
+            run_command(
+                name="Dictionary mapping preview",
+                expected_result="Dictionary mapping preview renders successfully",
+                command=[sys.executable, "scripts/dictionary_mapping_preview.py"],
+            )
+        )
+
+        steps.append(
+            run_internal_check(
+                name="Unmapped local values check",
+                expected_result="Known local enum values are explicitly mapped",
+                errors=validate_dictionary_unmapped_values(PROJECT_ROOT),
+            )
+        )
+
+        steps.append(
+            run_internal_check(
+                name="Dictionary version pin",
+                expected_result="Library dictionary version pin exists",
+                errors=validate_dictionary_version_pin(PROJECT_ROOT),
             )
         )
 
