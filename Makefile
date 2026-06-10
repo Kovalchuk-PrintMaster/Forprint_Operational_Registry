@@ -6,7 +6,7 @@ PIP ?= .venv_operational_registry/bin/pip
 	coordination-check coordination-fix module-policy-check
 	data-foundation-preview order-preview workflow-preview payment-preview 
 	material-requirement-preview alert-preview operational-report-preview
-	dictionary-mapping-preview
+	dictionary-mapping-preview governance-check
 
 install:
 	python3.11 -m venv .venv_operational_registry
@@ -89,3 +89,12 @@ operational-report-preview:
 
 dictionary-mapping-preview:
 	$(PYTHON) scripts/dictionary_mapping_preview.py
+
+governance-check:
+	@echo "== ForPrint Operational Registry governance check =="
+	$(MAKE) blueprint-pull
+	$(MAKE) blueprint-check
+	$(MAKE) blueprint-sync-directives
+	$(MAKE) module-policy-check
+	$(MAKE) coordination-check
+	$(MAKE) status-report
