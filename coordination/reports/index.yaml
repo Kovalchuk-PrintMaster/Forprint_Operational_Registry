@@ -28,3 +28,41 @@ reports:
   path: coordination/reports/completion/2026-06-09__forprint_operational_registry__report__canonical-dictionary-mapping-v0-1.md
   status: completed
   phase: canonical_dictionary_mapping_v0_1
+- report_id: 2026-06-17__forprint_operational_registry__report__blueprint-instruction-intake-standards-visibility-v0-1
+  path: coordination/reports/completion/2026-06-17__forprint_operational_registry__report__blueprint-instruction-intake-standards-visibility-v0-1.md
+  status: completed
+  phase: blueprint_instruction_intake_standards_visibility_v0_1
+  report_file: coordination/reports/completion/2026-06-17__forprint_operational_registry__report__blueprint-instruction-intake-standards-visibility-v0-1.md
+  created_at: '2026-06-17'
+  responds_to_prompt_id: blueprint_instruction_intake_rollout_v0_1
+  summary: Operational Registry now has Blueprint instruction intake and standards
+    visibility list/check/sync workflows integrated into check-report.
+  checks:
+    blueprint_instruction_check: ok
+    blueprint_standards_check: ok
+    check_report: ok
+    tests: ok_221_passed
+    governance_check: ok
+    boundary: ok
+  instruction_sources_reviewed:
+  - forprint_system_blueprint/coordination/instruction_intake/assistant_reading_order.md
+  - forprint_system_blueprint/coordination/instruction_intake/instruction_sources.yaml
+  - forprint_system_blueprint/coordination/instruction_intake/module_profile_model.md
+  - forprint_system_blueprint/coordination/instruction_intake/default_profile_traits.yaml
+  - forprint_operational_registry/coordination/instruction_intake/blueprint_instruction_packet.yaml
+  standards_reviewed:
+  - forprint_system_blueprint/coordination/standards/index.yaml
+  - forprint_system_blueprint/coordination/standards/module_standards_awareness_protocol.md
+  - forprint_system_blueprint/coordination/standards/module_governance_protocol.md
+  - forprint_system_blueprint/coordination/standards/module_make_target_contract.md
+  - forprint_operational_registry/coordination/standards/blueprint_standards_snapshot.yaml
+  standards_alignment_notes:
+  - Operational Registry now reads Blueprint instruction intake as the assistant entry
+    point.
+  - Local instruction packet is an audit snapshot; Blueprint remains the source of
+    truth.
+  - Blueprint standards visibility is available through list/check/sync targets.
+  - Standards remain advisory unless activated by prompt, directive or module policy.
+  - No production API, live write, accounting truth, Library catalog ownership, CRM
+    dashboard, Calculator pricing ownership, Warehouse stock truth or real 1C sync
+    was added.

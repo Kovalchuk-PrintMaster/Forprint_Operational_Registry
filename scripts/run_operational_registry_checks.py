@@ -130,6 +130,45 @@ def run_internal_check(
     )
 
 
+
+def run_local_validation_script(root: Path, script_path: str) -> list[str]:
+    """Run a local validation script and return check-report style errors."""
+
+    result = subprocess.run(
+        [sys.executable, script_path],
+        cwd=root,
+        text=True,
+        capture_output=True,
+    )
+    if result.returncode == 0:
+        return []
+
+    output = "\n".join(
+        part.strip()
+        for part in (result.stdout, result.stderr)
+        if part and part.strip()
+    )
+    return [output or f"{script_path} failed with exit code {result.returncode}"]
+
+
+def validate_blueprint_instruction_intake_visibility(root: Path) -> list[str]:
+    """Validate Blueprint instruction intake visibility for this module."""
+
+    return run_local_validation_script(
+        root,
+        "scripts/check_blueprint_instruction_intake.py",
+    )
+
+
+def validate_blueprint_standards_visibility(root: Path) -> list[str]:
+    """Validate Blueprint standards visibility for this module."""
+
+    return run_local_validation_script(
+        root,
+        "scripts/check_blueprint_standards.py",
+    )
+
+
 def build_check_report(run_external: bool = True) -> dict[str, object]:
     """Build full check report."""
 
@@ -507,6 +546,22 @@ def build_check_report(run_external: bool = True) -> dict[str, object]:
                 name="Order workflow preview targets",
                 expected_result="Required order/workflow Makefile preview targets exist",
                 errors=validate_order_workflow_preview_targets(PROJECT_ROOT),
+            )
+        )
+
+        steps.append(
+            run_internal_check(
+                name="Blueprint instruction intake visibility",
+                expected_result="Blueprint instruction intake packet is readable and boundary-safe",
+                errors=validate_blueprint_instruction_intake_visibility(PROJECT_ROOT),
+            )
+        )
+
+        steps.append(
+            run_internal_check(
+                name="Blueprint standards visibility",
+                expected_result="Blueprint standards index and local snapshot are readable",
+                errors=validate_blueprint_standards_visibility(PROJECT_ROOT),
             )
         )
 

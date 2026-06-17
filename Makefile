@@ -6,7 +6,7 @@ PIP ?= .venv_operational_registry/bin/pip
 	coordination-check coordination-fix module-policy-check
 	data-foundation-preview order-preview workflow-preview payment-preview 
 	material-requirement-preview alert-preview operational-report-preview
-	dictionary-mapping-preview governance-check
+	dictionary-mapping-preview governance-check blueprint-instruction-list blueprint-instruction-check blueprint-instruction-sync blueprint-standards-list blueprint-standards-check blueprint-standards-sync
 
 install:
 	python3.11 -m venv .venv_operational_registry
@@ -46,13 +46,31 @@ client-card-preview:
 	$(PYTHON) scripts/client_card_preview.py
 
 blueprint-pull:
-	@echo "DEFERRED: Blueprint pull is not wired for this module yet."
+	git -C /srv/software_development/forprint-project/forprint_system_blueprint pull --ff-only
 
 blueprint-check:
-	@echo "DEFERRED: Blueprint check is not wired for this module yet."
+	$(PYTHON) scripts/check_blueprint_instruction_intake.py
 
 blueprint-sync-directives:
 	@echo "DEFERRED: Blueprint directive sync is not wired for this module yet."
+
+blueprint-instruction-list:
+	$(PYTHON) scripts/list_blueprint_instruction_sources.py
+
+blueprint-instruction-check:
+	$(PYTHON) scripts/check_blueprint_instruction_intake.py
+
+blueprint-instruction-sync:
+	$(PYTHON) scripts/sync_blueprint_instruction_packet.py
+
+blueprint-standards-list:
+	$(PYTHON) scripts/list_blueprint_standards.py
+
+blueprint-standards-check:
+	$(PYTHON) scripts/check_blueprint_standards.py
+
+blueprint-standards-sync:
+	$(PYTHON) scripts/sync_blueprint_standards.py
 
 coordination-check:
 	@test -f coordination/status/current_status.yaml
@@ -95,6 +113,8 @@ governance-check:
 	$(MAKE) blueprint-pull
 	$(MAKE) blueprint-check
 	$(MAKE) blueprint-sync-directives
+	$(MAKE) blueprint-instruction-check
+	$(MAKE) blueprint-standards-check
 	$(MAKE) module-policy-check
 	$(MAKE) coordination-check
 	$(MAKE) status-report

@@ -2,19 +2,22 @@ module_id: forprint_operational_registry
 module_name: ForPrint Operational Registry
 module_status: active
 priority: p0
-current_phase: canonical_dictionary_mapping_v0_1
-last_completed_step: canonical_dictionary_mapping_ready
-current_status: canonical_dictionary_mapping_v0_1_completed
-last_prompt_id: owner_blueprint_prompt__client_account_card_foundation_v0_1
-last_report_id: 2026-06-05__forprint_operational_registry__report__client-account-card-foundation-v0-1
+current_phase: blueprint_instruction_intake_standards_visibility_v0_1
+last_completed_step: blueprint_instruction_intake_standards_visibility_ready
+current_status: blueprint_instruction_intake_standards_visibility_v0_1_completed
+last_prompt_id: blueprint_instruction_intake_rollout_v0_1
+last_report_id: 2026-06-17__forprint_operational_registry__report__blueprint-instruction-intake-standards-visibility-v0-1
 last_commit: '2135527'
 branch: main
 checks:
   lint: ok
-  tests: ok_142_passed
+  tests: ok_221_passed
   check_report: ok
   coordination_check: ok
   client_card_preview: ok
+  governance_check: ok
+  blueprint_instruction_check: ok
+  blueprint_standards_check: ok
 boundary:
   no_foreign_ownership: true
   no_production_api: true
@@ -44,11 +47,15 @@ current_outputs:
 - safe_demo_client_card_examples
 - client_account_architecture_docs
 - coordination_completion_report
+- blueprint_instruction_packet
+- blueprint_standards_snapshot
+- blueprint_instruction_visibility_checks
+- blueprint_standards_visibility_checks
 recommended_next_step:
-- Pause after ClientAccount Card Foundation v0.1 until Blueprint approves next foundation
-  step.
-- 'Recommended next candidate: Operational Analytics and Workflow Foundation v0.1.'
-updated_at: '2026-06-08T15:52:54.703820+00:00'
+- Use this rollout as the baseline for completion-report metadata automation.
+- Keep Operational Registry paused from production API/live integration work until
+  Blueprint approves next scope.
+updated_at: '2026-06-17T16:39:37.542721+00:00'
 validation:
   make_check: ok
   make_check_report: ok
@@ -62,18 +69,36 @@ validation:
   alert_preview: ok
   operational_report_preview: ok
   dictionary_mapping_preview: ok
+  governance_check: ok
+  blueprint_instruction_check: ok
+  blueprint_standards_check: ok
+  blueprint_instruction_sync: ok
+  blueprint_standards_sync: ok
 notes:
-  - ClientAccount Card Foundation v0.1 completed with models, identity lookup, terminal preview.
-  - ClientAccount card foundation models are added.
-  - client_account_id remains canonical customer/account truth.
-  - Data foundation strategy v0.1 added.
-  - Base data concepts are documented and represented as lightweight dataclasses.
-  - No synthetic product/material/supplier catalogs were added.
-  - No real 1C sync, API, web UI, Telegram notification or warehouse stock truth was added.
-  - Order / Workflow / Projection Foundation v0.1 completed.
-  - Operational order, order line, material, payment, workflow, contractor, deadline, alert and report foundations are added.
-  - Terminal previews for order, workflow, payment, material requirements, alerts and operational reports are available.
-  - No production API, web UI, Telegram notification, real Calculator/Library/Accounting/Warehouse integration or 1C write was added.
-  - Canonical Dictionary Mapping v0.1 completed.
-  - Operational Registry local enum/status values are mapped to Library canonical dictionary IDs.
-  - No Library dictionary edits or runtime Library integration were added.
+- ClientAccount Card Foundation v0.1 completed with models, identity lookup, terminal
+  preview.
+- ClientAccount card foundation models are added.
+- client_account_id remains canonical customer/account truth.
+- Data foundation strategy v0.1 added.
+- Base data concepts are documented and represented as lightweight dataclasses.
+- No synthetic product/material/supplier catalogs were added.
+- No real 1C sync, API, web UI, Telegram notification or warehouse stock truth was
+  added.
+- Order / Workflow / Projection Foundation v0.1 completed.
+- Operational order, order line, material, payment, workflow, contractor, deadline,
+  alert and report foundations are added.
+- Terminal previews for order, workflow, payment, material requirements, alerts and
+  operational reports are available.
+- No production API, web UI, Telegram notification, real Calculator/Library/Accounting/Warehouse
+  integration or 1C write was added.
+- Canonical Dictionary Mapping v0.1 completed.
+- Operational Registry local enum/status values are mapped to Library canonical dictionary
+  IDs.
+- No Library dictionary edits or runtime Library integration were added.
+- Blueprint Instruction Intake + Standards Visibility v0.1 completed.
+- Operational Registry now has local Blueprint instruction packet and standards snapshot
+  audit records.
+- Blueprint instruction and standards visibility checks are integrated into check-report.
+- Blueprint remains the source of truth; local snapshots are audit-only.
+- No production API, live write, real integration, accounting truth, Library ownership
+  or CRM dashboard was added.

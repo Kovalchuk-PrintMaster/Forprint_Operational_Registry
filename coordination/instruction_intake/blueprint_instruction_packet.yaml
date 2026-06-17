@@ -1,0 +1,31 @@
+packet_id: operational_registry_blueprint_instruction_packet_v0_1
+module_id: forprint_operational_registry
+source_blueprint_path: /srv/software_development/forprint-project/forprint_system_blueprint
+source_blueprint_commit: 12e4fbd
+generated_at: '2026-06-17T16:39:52.302260+00:00'
+instruction_intake_version: v0_1
+priority_order_confirmed: true
+freshness_policy_confirmed: true
+module_profile:
+  maturity: active_development
+  business_criticality: core
+  complexity: high
+  automation_level: medium
+  standards_strictness: growing
+  prompt_priority: high
+  cleanup_priority: medium
+  feedback_required: true
+instruction_sources_reviewed:
+- coordination/instruction_intake/assistant_reading_order.md
+- coordination/instruction_intake/instruction_sources.yaml
+- coordination/instruction_intake/module_profile_model.md
+- coordination/instruction_intake/default_profile_traits.yaml
+boundary_confirmation:
+  no_production_api_added: true
+  no_live_write_added: true
+  no_real_external_integrations_added: true
+  no_accounting_truth_added: true
+  no_library_catalog_ownership_added: true
+  no_crm_dashboard_added: true
+  no_final_price_calculation_added: true
+questions_for_blueprint: []
