@@ -2,7 +2,7 @@ packet_id: operational_registry_blueprint_instruction_packet_v0_1
 module_id: forprint_operational_registry
 source_blueprint_path: /srv/software_development/forprint-project/forprint_system_blueprint
 source_blueprint_commit: 12e4fbd
-generated_at: '2026-06-17T16:39:52.302260+00:00'
+generated_at: '2026-06-18T06:28:09.926392+00:00'
 instruction_intake_version: v0_1
 priority_order_confirmed: true
 freshness_policy_confirmed: true
