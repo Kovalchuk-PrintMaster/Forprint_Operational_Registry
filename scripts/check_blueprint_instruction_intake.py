@@ -44,13 +44,13 @@ def main() -> int:
 
     data = {}
     if SOURCES_PATH.is_file():
-        data = yaml.safe_load(SOURCES_PATH.read_text(encoding='utf-8')) or {}
-        if data.get('status') != 'active':
+        data = yaml.safe_load(SOURCES_PATH.read_text(encoding="utf-8")) or {}
+        if data.get("status") != "active":
             issues.append("instruction_sources.yaml status must be active")
-        freshness = data.get('freshness_policy') or {}
-        if freshness.get('read_blueprint_source_on_each_prompt') is not True:
+        freshness = data.get("freshness_policy") or {}
+        if freshness.get("read_blueprint_source_on_each_prompt") is not True:
             issues.append("freshness policy must require reading Blueprint source on each prompt")
-        priority_ids = [item.get('source_id') for item in data.get('priority_order', [])]
+        priority_ids = [item.get("source_id") for item in data.get("priority_order", [])]
         for source_id in REQUIRED_PRIORITY_IDS:
             if source_id not in priority_ids:
                 issues.append(f"missing priority source_id: {source_id}")

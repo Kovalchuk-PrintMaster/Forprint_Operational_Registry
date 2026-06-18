@@ -12,6 +12,18 @@ BLUEPRINT_ROOT = Path("/srv/software_development/forprint-project/forprint_syste
 STANDARDS_INDEX = BLUEPRINT_ROOT / "coordination/standards/index.yaml"
 OUTPUT_PATH = Path("coordination/standards/blueprint_standards_snapshot.yaml")
 
+VOLATILE_SNAPSHOT_KEYS: frozenset[str] = frozenset(
+    {
+        "generated_at",
+        "snapshot_created_at",
+        "snapshot_timestamp",
+        "last_synced_at",
+        "synced_at",
+        "refreshed_at",
+        "updated_at",
+    }
+)
+
 
 def blueprint_commit() -> str:
     result = subprocess.run(
@@ -21,6 +33,54 @@ def blueprint_commit() -> str:
         capture_output=True,
     )
     return result.stdout.strip()
+
+
+def semantic_payload(value: Any) -> Any:
+    """Return payload without volatile timestamp-only fields."""
+
+    if isinstance(value, dict):
+        return {
+            key: semantic_payload(item)
+            for key, item in value.items()
+            if key not in VOLATILE_SNAPSHOT_KEYS
+        }
+
+    if isinstance(value, list):
+        return [semantic_payload(item) for item in value]
+
+    return value
+
+
+def yaml_payload(path: Path) -> dict[str, Any] | None:
+    """Load YAML mapping from path if it exists."""
+
+    if not path.exists():
+        return None
+
+    data = yaml.safe_load(path.read_text(encoding="utf-8"))
+    if not isinstance(data, dict):
+        return None
+
+    return data
+
+
+def write_yaml_if_semantic_changed(payload: dict[str, Any], path: Path) -> bool:
+    """Write YAML only if semantic payload changed.
+
+    Returns True when file was written.
+    """
+
+    existing = yaml_payload(path)
+    if existing is not None:
+        if semantic_payload(existing) == semantic_payload(payload):
+            return False
+
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(
+        yaml.safe_dump(payload, sort_keys=False, allow_unicode=True),
+        encoding="utf-8",
+    )
+    return True
 
 
 def find_advisory_semantics(value: Any) -> dict[str, Any]:
@@ -61,13 +121,21 @@ def fallback_advisory_semantics(raw_text: str) -> dict[str, Any]:
     return {}
 
 
-def main() -> int:
+def build_standards_snapshot() -> dict[str, Any]:
+    """Build local Blueprint standards snapshot."""
+
     raw_text = STANDARDS_INDEX.read_text(encoding="utf-8")
     index = yaml.safe_load(raw_text)
+    if not isinstance(index, dict):
+        raise ValueError("Blueprint standards index must be a YAML mapping")
+
     standards = index.get("standards", [])
+    if not isinstance(standards, list):
+        raise ValueError("Blueprint standards index `standards` must be a list")
+
     advisory_semantics = find_advisory_semantics(index) or fallback_advisory_semantics(raw_text)
 
-    snapshot = {
+    return {
         "snapshot_id": "operational_registry_blueprint_standards_snapshot_v0_1",
         "module_id": MODULE_ID,
         "source_blueprint_path": str(BLUEPRINT_ROOT),
@@ -92,9 +160,15 @@ def main() -> int:
         ],
     }
 
-    OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
-    OUTPUT_PATH.write_text(yaml.safe_dump(snapshot, sort_keys=False), encoding="utf-8")
-    print("✅ Operational Registry Blueprint standards snapshot refreshed.")
+
+def main() -> int:
+    snapshot = build_standards_snapshot()
+    changed = write_yaml_if_semantic_changed(snapshot, OUTPUT_PATH)
+
+    if changed:
+        print("✅ Operational Registry Blueprint standards snapshot refreshed.")
+    else:
+        print("✅ Operational Registry Blueprint standards snapshot already up to date.")
     print(f"  - {OUTPUT_PATH}")
     return 0
 

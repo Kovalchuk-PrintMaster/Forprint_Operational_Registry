@@ -1,12 +1,15 @@
 PYTHON ?= .venv_operational_registry/bin/python
 PIP ?= .venv_operational_registry/bin/pip
+PACKET ?= coordination/completion_packets/examples/local_launch_readiness_v0_1.yaml
 
-.PHONY: install test lint lint-fix check check-report status-report format 
-	clean client-card-preview blueprint-pull blueprint-check blueprint-sync-directives 
+.PHONY: install test lint lint-fix check check-report status-report format
+	clean client-card-preview blueprint-pull blueprint-check blueprint-sync-directives
 	coordination-check coordination-fix module-policy-check
-	data-foundation-preview order-preview workflow-preview payment-preview 
+	data-foundation-preview order-preview workflow-preview payment-preview
 	material-requirement-preview alert-preview operational-report-preview
-	dictionary-mapping-preview governance-check blueprint-instruction-list blueprint-instruction-check blueprint-instruction-sync blueprint-standards-list blueprint-standards-check blueprint-standards-sync
+	dictionary-mapping-preview governance-check blueprint-instruction-list blueprint-instruction-check
+	blueprint-instruction-sync blueprint-standards-list blueprint-standards-check blueprint-standards-sync
+	completion-packet-validate completion-packet-apply
 
 install:
 	python3.11 -m venv .venv_operational_registry
@@ -31,7 +34,6 @@ check-report:
 	$(PYTHON) scripts/run_operational_registry_checks.py
 
 format:
-	$(PYTHON) -m ruff check app tests scripts --fix
 	$(PYTHON) -m ruff format app tests scripts
 
 clean:
@@ -118,3 +120,12 @@ governance-check:
 	$(MAKE) module-policy-check
 	$(MAKE) coordination-check
 	$(MAKE) status-report
+
+
+
+
+completion-packet-validate:
+	$(PYTHON) scripts/validate_completion_packet.py $(PACKET)
+
+completion-packet-apply:
+	$(PYTHON) scripts/apply_completion_packet.py $(PACKET)

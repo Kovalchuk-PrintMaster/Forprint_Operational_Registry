@@ -1,6 +1,9 @@
+from __future__ import annotations
+
 import subprocess
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import Any
 
 import yaml
 
@@ -19,6 +22,18 @@ BLUEPRINT_ROOT = Path("/srv/software_development/forprint-project/forprint_syste
 SOURCES_PATH = BLUEPRINT_ROOT / "coordination/instruction_intake/instruction_sources.yaml"
 OUTPUT_PATH = Path("coordination/instruction_intake/blueprint_instruction_packet.yaml")
 
+VOLATILE_SNAPSHOT_KEYS: frozenset[str] = frozenset(
+    {
+        "generated_at",
+        "snapshot_created_at",
+        "snapshot_timestamp",
+        "last_synced_at",
+        "synced_at",
+        "refreshed_at",
+        "updated_at",
+    }
+)
+
 
 def blueprint_commit() -> str:
     result = subprocess.run(
@@ -30,9 +45,62 @@ def blueprint_commit() -> str:
     return result.stdout.strip()
 
 
-def main() -> int:
-    sources = yaml.safe_load(SOURCES_PATH.read_text(encoding='utf-8'))
-    packet = {
+def semantic_payload(value: Any) -> Any:
+    """Return payload without volatile timestamp-only fields."""
+
+    if isinstance(value, dict):
+        return {
+            key: semantic_payload(item)
+            for key, item in value.items()
+            if key not in VOLATILE_SNAPSHOT_KEYS
+        }
+
+    if isinstance(value, list):
+        return [semantic_payload(item) for item in value]
+
+    return value
+
+
+def yaml_payload(path: Path) -> dict[str, Any] | None:
+    """Load YAML mapping from path if it exists."""
+
+    if not path.exists():
+        return None
+
+    data = yaml.safe_load(path.read_text(encoding="utf-8"))
+    if not isinstance(data, dict):
+        return None
+
+    return data
+
+
+def write_yaml_if_semantic_changed(payload: dict[str, Any], path: Path) -> bool:
+    """Write YAML only if semantic payload changed.
+
+    Returns True when file was written.
+    """
+
+    existing = yaml_payload(path)
+    if existing is not None:
+        if semantic_payload(existing) == semantic_payload(payload):
+            return False
+
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(
+        yaml.safe_dump(payload, sort_keys=False, allow_unicode=True),
+        encoding="utf-8",
+    )
+    return True
+
+
+def build_instruction_packet() -> dict[str, Any]:
+    """Build local Blueprint instruction packet snapshot."""
+
+    sources = yaml.safe_load(SOURCES_PATH.read_text(encoding="utf-8"))
+    if not isinstance(sources, dict):
+        raise ValueError("Blueprint instruction sources must be a YAML mapping")
+
+    return {
         "packet_id": "operational_registry_blueprint_instruction_packet_v0_1",
         "module_id": MODULE_ID,
         "source_blueprint_path": str(BLUEPRINT_ROOT),
@@ -59,9 +127,16 @@ def main() -> int:
         },
         "questions_for_blueprint": [],
     }
-    OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
-    OUTPUT_PATH.write_text(yaml.safe_dump(packet, sort_keys=False), encoding='utf-8')
-    print("✅ Operational Registry Blueprint instruction packet refreshed.")
+
+
+def main() -> int:
+    packet = build_instruction_packet()
+    changed = write_yaml_if_semantic_changed(packet, OUTPUT_PATH)
+
+    if changed:
+        print("✅ Operational Registry Blueprint instruction packet refreshed.")
+    else:
+        print("✅ Operational Registry Blueprint instruction packet already up to date.")
     print(f"  - {OUTPUT_PATH}")
     return 0
 

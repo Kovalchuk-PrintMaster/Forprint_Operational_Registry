@@ -15,11 +15,15 @@ def has_explicit_advisory_semantics(value: Any) -> bool:
     if isinstance(value, dict):
         for key, item in value.items():
             key_text = str(key).lower()
-            if key_text in {
-                "standards_are_advisory_by_default",
-                "advisory_by_default",
-                "standards_advisory_by_default",
-            } and item is True:
+            if (
+                key_text
+                in {
+                    "standards_are_advisory_by_default",
+                    "advisory_by_default",
+                    "standards_advisory_by_default",
+                }
+                and item is True
+            ):
                 return True
             if has_explicit_advisory_semantics(item):
                 return True
@@ -63,10 +67,7 @@ def main() -> int:
                 if not standard_path.is_file():
                     issues.append(f"missing standards file: {standard_path}")
 
-    if not (
-        has_explicit_advisory_semantics(data)
-        or raw_text_has_advisory_semantics(raw_text)
-    ):
+    if not (has_explicit_advisory_semantics(data) or raw_text_has_advisory_semantics(raw_text)):
         issues.append("standards advisory semantics must be explicit")
 
     if SNAPSHOT_PATH.is_file():

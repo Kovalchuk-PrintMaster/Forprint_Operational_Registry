@@ -17,6 +17,21 @@ from rich.table import Table
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 APP_PATH = PROJECT_ROOT / "app"
 
+REQUIRED_LOCAL_LAUNCH_READINESS_DOCS: tuple[str, ...] = (
+    "docs/local_launch_readiness/README.md",
+    "docs/local_launch_readiness/operator_workflow.md",
+    "docs/local_launch_readiness/local_readiness_checklist.md",
+    "docs/local_launch_readiness/non_goals_and_boundaries.md",
+    "docs/local_launch_readiness/future_runtime_boundary.md",
+)
+
+REQUIRED_COMPLETION_PACKET_AUTOMATION_FILES: tuple[str, ...] = (
+    "coordination/completion_packets/examples/local_launch_readiness_v0_1.yaml",
+    "scripts/validate_completion_packet.py",
+    "scripts/apply_completion_packet.py",
+    "tests/integration/test_completion_packet_automation.py",
+)
+
 if str(APP_PATH) not in sys.path:
     sys.path.insert(0, str(APP_PATH))
 
@@ -129,8 +144,6 @@ def run_internal_check(
         details="OK" if not errors else "\n".join(errors),
     )
 
-
-
 def run_local_validation_script(root: Path, script_path: str) -> list[str]:
     """Run a local validation script and return check-report style errors."""
 
@@ -144,9 +157,7 @@ def run_local_validation_script(root: Path, script_path: str) -> list[str]:
         return []
 
     output = "\n".join(
-        part.strip()
-        for part in (result.stdout, result.stderr)
-        if part and part.strip()
+        part.strip() for part in (result.stdout, result.stderr) if part and part.strip()
     )
     return [output or f"{script_path} failed with exit code {result.returncode}"]
 
@@ -167,6 +178,63 @@ def validate_blueprint_standards_visibility(root: Path) -> list[str]:
         root,
         "scripts/check_blueprint_standards.py",
     )
+
+def validate_local_launch_readiness_docs(root: Path) -> list[str]:
+    """Validate Local Launch Readiness documentation exists and confirms boundaries."""
+
+    errors: list[str] = []
+
+    for relative_path in REQUIRED_LOCAL_LAUNCH_READINESS_DOCS:
+        path = root / relative_path
+        if not path.exists():
+            errors.append(f"Local launch readiness doc is missing: {relative_path}")
+            continue
+
+        text = path.read_text(encoding="utf-8").lower()
+        if "production api" not in text:
+            errors.append(f"{relative_path} must mention production API boundary")
+        if "live integration" not in text and "live external integration" not in text:
+            errors.append(f"{relative_path} must mention live integration boundary")
+
+    return errors
+
+
+def validate_completion_packet_automation_files(root: Path) -> list[str]:
+    """Validate completion packet automation files exist."""
+
+    errors: list[str] = []
+
+    for relative_path in REQUIRED_COMPLETION_PACKET_AUTOMATION_FILES:
+        if not (root / relative_path).exists():
+            errors.append(f"Completion packet automation file is missing: {relative_path}")
+
+    return errors
+
+
+def validate_blueprint_sync_idempotency(root: Path) -> list[str]:
+    """Validate Blueprint snapshot sync idempotency tests exist.
+
+    The actual non-mutating behavior is covered by the unit test. We intentionally
+    avoid running sync commands here because check-report should not mutate
+    committed coordination snapshots.
+    """
+
+    path = root / "tests/unit/test_blueprint_snapshot_idempotency.py"
+    if not path.exists():
+        return ["Blueprint snapshot idempotency test is missing"]
+
+    text = path.read_text(encoding="utf-8")
+    required_terms = (
+        "test_instruction_snapshot_writer_does_not_rewrite_timestamp_only_change",
+        "test_standards_snapshot_writer_does_not_rewrite_timestamp_only_change",
+        "semantic_payload",
+    )
+
+    return [
+        f"Blueprint snapshot idempotency test is missing required term: {term}"
+        for term in required_terms
+        if term not in text
+    ]
 
 
 def build_check_report(run_external: bool = True) -> dict[str, object]:
@@ -570,6 +638,42 @@ def build_check_report(run_external: bool = True) -> dict[str, object]:
                 name="Coordination files",
                 expected_result="Coordination status and report files exist",
                 errors=validate_coordination_files(PROJECT_ROOT),
+            )
+        )
+
+        steps.append(
+            run_internal_check(
+                name="Local launch readiness docs",
+                expected_result="Local launch readiness docs exist and confirm runtime boundaries",
+                errors=validate_local_launch_readiness_docs(PROJECT_ROOT),
+            )
+        )
+
+        steps.append(
+            run_internal_check(
+                name="Completion packet automation files",
+                expected_result="Completion packet scripts, packet example and tests exist",
+                errors=validate_completion_packet_automation_files(PROJECT_ROOT),
+            )
+        )
+
+        steps.append(
+            run_command(
+                name="Completion packet example validation",
+                expected_result="Completion packet example validates successfully",
+                command=[
+                    sys.executable,
+                    "scripts/validate_completion_packet.py",
+                    "coordination/completion_packets/examples/local_launch_readiness_v0_1.yaml",
+                ],
+            )
+        )
+
+        steps.append(
+            run_internal_check(
+                name="Blueprint sync idempotency",
+                expected_result="Blueprint snapshot sync ignores timestamp-only churn",
+                errors=validate_blueprint_sync_idempotency(PROJECT_ROOT),
             )
         )
 
