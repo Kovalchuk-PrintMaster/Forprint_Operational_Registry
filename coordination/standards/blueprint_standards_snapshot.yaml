@@ -1,8 +1,8 @@
 snapshot_id: operational_registry_blueprint_standards_snapshot_v0_1
 module_id: forprint_operational_registry
 source_blueprint_path: /srv/software_development/forprint-project/forprint_system_blueprint
-source_blueprint_commit: 12e4fbd
-snapshot_timestamp: '2026-06-18T06:28:10.115945+00:00'
+source_blueprint_commit: 88db68d
+snapshot_timestamp: '2026-06-19T14:23:31.213297+00:00'
 standards_index_path: coordination/standards/index.yaml
 standards_index_version: v0_1
 standards_count: 19
